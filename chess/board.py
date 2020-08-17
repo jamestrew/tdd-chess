@@ -10,6 +10,7 @@ class Board:
     def __init__(self, player_white=True):
         self.player_white = True if player_white is True else False
         self.opponent_white = not self.player_white
+        self.white_to_move = True
         self.moves = []
 
         self.board = np.full((DIM, DIM), Null(), dtype=object)

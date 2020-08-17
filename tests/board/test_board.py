@@ -23,6 +23,7 @@ def test_board_init_play_white():
 
     assert board.player_white is True
     assert board.opponent_white is False
+    assert board.white_to_move is True
     assert board.moves == []
     assert game == test_game
 
@@ -48,5 +49,6 @@ def test_board_init_play_black():
 
     assert board.player_white is False
     assert board.opponent_white is True
+    assert board.white_to_move is True
     assert board.moves == []
     assert game == test_game
