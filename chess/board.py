@@ -61,9 +61,13 @@ class Board:
             for i in range(DIM):
                 if array[i][j] == '--':
                     continue
-                white = True if array[i][j].startswith('w') else False
-                unit = array[i][j][-1]
-                self.board[i][j] = self.unit_dict[unit](i, j, white)
+                is_white = True if array[i][j].startswith('w') else False
+                unit = self.unit_dict[array[i][j][-1]]
+                if unit == Pawn and i not in (1, 6):
+                    # pawn has committed their first move
+                    self.board[i][j] = unit(i, j, is_white, first_move=False)
+                else:
+                    self.board[i][j] = unit(i, j, is_white)
 
     def to_array(self):
         array = []

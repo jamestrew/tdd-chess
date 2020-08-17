@@ -11,22 +11,17 @@ def test_pawn_init():
     assert pawn.col == 0
     assert pawn.is_white is False
     assert pawn.first_move is True
-
-
-def test_pawn_unit():
-    pawn = Pawn(1, 0, False)
     assert pawn.unit == 'p'
-
-
-def test_pawn_name():
-    pawn = Pawn(1, 0, False)
     assert pawn.name == 'bp'
 
-
-def test_pawn_repr():
-    pawn = Pawn(1, 0, False)
     rep = pawn.__repr__()
     assert rep == "Pawn(1, 0, is_white=False)"
+
+
+def test_pawn_init_not_first_move():
+    pawn = Pawn(3, 1, False, False)
+
+    assert pawn.first_move is False
 
 
 @pytest.fixture
