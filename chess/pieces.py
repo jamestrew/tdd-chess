@@ -78,8 +78,6 @@ class Rook(Piece):
 class Bishop(Piece):
 
     def get_moves(self, game):
-        row = self.row
-        col = self.col
         moves = []
 
         def _check_move(new_r, new_c):
@@ -95,49 +93,65 @@ class Bishop(Piece):
                 return False
             return False
 
-        # up-left
-        move = 1
-        while True:
-            new_r = row - move
-            new_c = col - move
-            if new_r < 0 or new_c < 0:  # out of play
-                break
-            if not _check_move(new_r, new_c):
-                break
-            move += 1
+        def append(dx, dy):
+            multi = 1
+            while True:
+                new_r = self.row + multi * dx
+                new_c = self.col + multi * dy
 
-        # up-right
-        move = 1
-        while True:
-            new_r = row - move
-            new_c = col + move
-            if new_r < 0 or new_c >= DIM:  # out of play
-                break
-            if not _check_move(new_r, new_c):
-                break
-            move += 1
+                if new_r < 0 or new_r >= DIM or new_c < 0 or new_c >= DIM:
+                    break
+                if not _check_move(new_r, new_c):
+                    break
+                multi += 1
 
-        # down-left
-        move = 1
-        while True:
-            new_r = row + move
-            new_c = col - move
-            if new_r >= DIM or new_c < 0:  # out of play
-                break
-            if not _check_move(new_r, new_c):
-                break
-            move += 1
+        for dx in (-1, 1):
+            for dy in (-1, 1):
+                append(dx, dy)
 
-        # down-right
-        move = 1
-        while True:
-            new_r = row + move
-            new_c = col + move
-            if new_r >= DIM or new_c >= DIM:  # out of play
-                break
-            if not _check_move(new_r, new_c):
-                break
-            move += 1
+        # # up-left
+        # move = 1
+        # while True:
+        #     new_r = row - move
+        #     new_c = col - move
+        #     if new_r < 0 or new_c < 0:  # out of play
+        #         break
+        #     if not _check_move(new_r, new_c):
+        #         break
+        #     move += 1
+
+        # # up-right
+        # move = 1
+        # while True:
+        #     new_r = row - move
+        #     new_c = col + move
+        #     if new_r < 0 or new_c >= DIM:  # out of play
+        #         break
+        #     if not _check_move(new_r, new_c):
+        #         break
+        #     move += 1
+
+        # # down-left
+        # move = 1
+        # while True:
+        #     new_r = row + move
+        #     new_c = col - move
+        #     if new_r >= DIM or new_c < 0:  # out of play
+        #         break
+        #     if not _check_move(new_r, new_c):
+        #         break
+        #     move += 1
+
+        # # down-right
+        # move = 1
+        # while True:
+        #     new_r = row + move
+        #     new_c = col + move
+        #     if new_r >= DIM or new_c >= DIM:  # out of play
+        #         break
+        #     if not _check_move(new_r, new_c):
+        #         break
+        #     move += 1
 
         return moves
 
