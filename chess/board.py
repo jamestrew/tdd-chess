@@ -45,3 +45,12 @@ class Board:
         self.board[0][k_col] = King(0, k_col, self.opponent_white)
         self.board[7][q_col] = Queen(7, q_col, self.player_white)
         self.board[7][k_col] = King(7, k_col, self.player_white)
+
+    def to_array(self):
+        array = []
+        for i in range(DIM):
+            row = []
+            for j in range(DIM):
+                row.append(self.board[i][j].name)
+            array.append(row)
+        return array
