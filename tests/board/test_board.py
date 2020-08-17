@@ -74,4 +74,5 @@ def test_board_init_from_array():
 
     board = Board(player_white=True, array=test_board, white_to_move=True)
     assert board.to_array() == test_board
-    assert board.get_piece(3, 1).first_move is False
+    assert board[(3, 1)].first_move is False
+    assert board[(1, 5)].name == 'bp'
