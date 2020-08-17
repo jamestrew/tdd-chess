@@ -1,5 +1,6 @@
 """ Pieces Module (entities) """
 from chess.constants import *
+from itertools import permutations
 
 
 class Piece:
@@ -108,57 +109,28 @@ class Bishop(Piece):
         for dx in (-1, 1):
             for dy in (-1, 1):
                 append(dx, dy)
-
-        # # up-left
-        # move = 1
-        # while True:
-        #     new_r = row - move
-        #     new_c = col - move
-        #     if new_r < 0 or new_c < 0:  # out of play
-        #         break
-        #     if not _check_move(new_r, new_c):
-        #         break
-        #     move += 1
-
-        # # up-right
-        # move = 1
-        # while True:
-        #     new_r = row - move
-        #     new_c = col + move
-        #     if new_r < 0 or new_c >= DIM:  # out of play
-        #         break
-        #     if not _check_move(new_r, new_c):
-        #         break
-        #     move += 1
-
-        # # down-left
-        # move = 1
-        # while True:
-        #     new_r = row + move
-        #     new_c = col - move
-        #     if new_r >= DIM or new_c < 0:  # out of play
-        #         break
-        #     if not _check_move(new_r, new_c):
-        #         break
-        #     move += 1
-
-        # # down-right
-        # move = 1
-        # while True:
-        #     new_r = row + move
-        #     new_c = col + move
-        #     if new_r >= DIM or new_c >= DIM:  # out of play
-        #         break
-        #     if not _check_move(new_r, new_c):
-        #         break
-        #     move += 1
-
         return moves
 
 
 class Night(Piece):
     """ Night used in place of Knight """
-    pass
+
+    def get_moves(self, game):
+        moves = []
+
+        for dx, dy in permutations([1, 2, -1, -2], 2):
+            if abs(dx) == abs(dy):
+                continue
+
+            new_r = self.row + dx
+            new_c = self.col + dy
+            if new_r < 0 or new_r >= DIM or new_c < 0 or new_c >= DIM:
+                continue
+            if isinstance(game[(new_r, new_c)], Null):
+                moves.append((new_r, new_c))
+            if self._check_capture(new_r, new_c, game):
+                moves.append((new_r, new_c))
+        return moves
 
 
 class King(Piece):
