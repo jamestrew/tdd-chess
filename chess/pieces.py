@@ -35,10 +35,10 @@ class Piece:
         raise NotImplementedError
 
     def _check_capture(self, new_r, new_c, game):
+        """ returns True if capture is possible """
         piece = game[(new_r, new_c)]
         if not isinstance(piece, Null):
-            if piece.is_white != self.is_white:
-                return (new_r, new_c)
+            return piece.is_white != self.is_white
 
 
 class Pawn(Piece):
@@ -65,7 +65,7 @@ class Pawn(Piece):
             if col + side in (-1, DIM):
                 continue
 
-            if self._check_capture(row + fwd, col + side, game) is not None:
+            if self._check_capture(row + fwd, col + side, game):
                 moves.append((row + fwd, col + side))
 
         return moves
@@ -76,7 +76,70 @@ class Rook(Piece):
 
 
 class Bishop(Piece):
-    pass
+
+    def get_moves(self, game):
+        row = self.row
+        col = self.col
+        moves = []
+
+        def _check_move(new_r, new_c):
+            """ [Helper function] may be moved to superclass in the future
+                Add move. Returns False if a capture is possible.
+                Return False causes a break.
+            """
+            if isinstance(game[(new_r, new_c)], Null):
+                moves.append((new_r, new_c))
+                return True
+            elif self._check_capture(new_r, new_c, game):
+                moves.append((new_r, new_c))
+                return False
+            return False
+
+        # up-left
+        move = 1
+        while True:
+            new_r = row - move
+            new_c = col - move
+            if new_r < 0 or new_c < 0:  # out of play
+                break
+            if not _check_move(new_r, new_c):
+                break
+            move += 1
+
+        # up-right
+        move = 1
+        while True:
+            new_r = row - move
+            new_c = col + move
+            if new_r < 0 or new_c >= DIM:  # out of play
+                break
+            if not _check_move(new_r, new_c):
+                break
+            move += 1
+
+        # down-left
+        move = 1
+        while True:
+            new_r = row + move
+            new_c = col - move
+            if new_r >= DIM or new_c < 0:  # out of play
+                break
+            if not _check_move(new_r, new_c):
+                break
+            move += 1
+
+        # down-right
+        move = 1
+        while True:
+            new_r = row + move
+            new_c = col + move
+            if new_r >= DIM or new_c >= DIM:  # out of play
+                break
+            if not _check_move(new_r, new_c):
+                break
+            move += 1
+
+        return moves
 
 
 class Night(Piece):
