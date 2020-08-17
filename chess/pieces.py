@@ -4,15 +4,22 @@
 class Piece:
     """ Parent class for all chess pieces """
 
+    unit_dict = {
+        'Pawn': 'p',
+        'Rook': 'r',
+        'Night': 'n',
+        'Bishop': 'b',
+        'Queen': 'q',
+        'King': 'k',
+        'Piece': 'x'
+    }
+
     def __init__(self, row, col, is_white):
         self.row = row
         self.col = col
         self.is_white = is_white  # bool
 
-        unit_name = self.__class__.__name__
-        # Unit is simply the first letter of the piece type
-        # eg. Pawn = 'p', Knight = 'n' (the one except commonly used)
-        self.unit = unit_name[0].lower()
+        self.unit = self.unit_dict[self.__class__.__name__]
 
         if self.is_white is True:
             self.name = 'w' + self.unit
@@ -38,10 +45,15 @@ class Pawn(Piece):
         moves = []
         fwd = -1 if self.is_white is True else 1
 
+        # basic move
         if board[self.row + fwd][self.col] == '--':
             moves.append((self.row + fwd, self.col))
             if self.first_move:
                 moves.append((self.row + 2 * fwd, self.col))
+
+        # basic capture
+        pass
+
         return moves
 
 
