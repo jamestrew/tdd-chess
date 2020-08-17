@@ -7,14 +7,29 @@ from chess.constants import *
 
 class Board:
 
-    def __init__(self, player_white=True):
+    unit_dict = {
+        'p': Pawn,
+        'r': Rook,
+        'n': Night,
+        'b': Bishop,
+        'q': Queen,
+        'k': King
+    }
+
+    def __init__(self, player_white, white_to_move=True, array=None):
         self.player_white = True if player_white is True else False
         self.opponent_white = not self.player_white
-        self.white_to_move = True
+        self.white_to_move = white_to_move
         self.moves = []
 
         self.board = np.full((DIM, DIM), Null(), dtype=object)
+        if array is None:
+            self._init_board_start()
+        else:
+            self._init_from_array(array)
 
+    def _init_board_start(self):
+        """ Inits the board according to basic chess start config """
         self.board[0][0] = Rook(0, 0, self.opponent_white)
         self.board[0][1] = Night(0, 1, self.opponent_white)
         self.board[0][2] = Bishop(0, 2, self.opponent_white)
@@ -34,17 +49,21 @@ class Board:
         self.board[7][7] = Rook(7, 7, self.player_white)
 
         # flip the King/Queen depending on the player_white
-        if self.player_white:
-            q_col = 3
-            k_col = 4
-        else:
-            q_col = 4
-            k_col = 3
+        q_col, k_col = (3, 4) if self.player_white else (4, 3)
 
         self.board[0][q_col] = Queen(0, q_col, self.opponent_white)
         self.board[0][k_col] = King(0, k_col, self.opponent_white)
         self.board[7][q_col] = Queen(7, q_col, self.player_white)
         self.board[7][k_col] = King(7, k_col, self.player_white)
+
+    def _init_from_array(self, array):
+        for j in range(DIM):
+            for i in range(DIM):
+                if array[i][j] == '--':
+                    continue
+                white = True if array[i][j].startswith('w') else False
+                unit = array[i][j][-1]
+                self.board[i][j] = self.unit_dict[unit](i, j, white)
 
     def to_array(self):
         array = []
