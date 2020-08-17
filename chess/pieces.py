@@ -1,4 +1,5 @@
 """ Pieces Module (entities) """
+from chess.constants import *
 
 
 class Piece:
@@ -41,18 +42,25 @@ class Pawn(Piece):
         super().__init__(row, col, is_white)
         self.first_move = first_move
 
-    def get_moves(self, board):
+    def get_moves(self, game):
         moves = []
         fwd = -1 if self.is_white is True else 1
 
         # basic move
-        if board[self.row + fwd][self.col] == '--':
+        if isinstance(game.get_piece(self.row + fwd, self.col), Null):
             moves.append((self.row + fwd, self.col))
             if self.first_move:
                 moves.append((self.row + 2 * fwd, self.col))
 
         # basic capture
-        pass
+        for side in [-1, 1]:
+            if self.col + side in (-1, DIM):
+                continue
+
+            piece = game.get_piece(self.row + fwd, self.col + side)
+            if not isinstance(piece, Null):
+                if piece.is_white != self.is_white:
+                    moves.append((self.row + fwd, self.col + side))
 
         return moves
 
