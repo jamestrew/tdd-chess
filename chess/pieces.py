@@ -1,4 +1,4 @@
-""" Pieces Module"""
+""" Pieces Module (entities) """
 
 
 class Piece:
@@ -51,3 +51,10 @@ class King(Piece):
 
 class Queen(Piece):
     pass
+
+
+class Null:
+    """ Represents empty spaces on the chess board """
+
+    def __init__(self):
+        self.name = '--'

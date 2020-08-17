@@ -14,11 +14,13 @@ def test_pawn_unit():
     pawn = Pawn(1, 0, False)
     assert pawn.unit == 'p'
 
+
 def test_pawn_name():
     pawn = Pawn(1, 0, False)
     assert pawn.name == 'bp'
 
+
 def test_pawn_repr():
     pawn = Pawn(1, 0, False)
-    rep = pawn.repr()
+    rep = pawn.__repr__()
     assert rep == "Pawn(1, 0, white=False)"
