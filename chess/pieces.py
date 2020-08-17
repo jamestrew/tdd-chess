@@ -22,7 +22,7 @@ class Piece:
 
         self.unit = self.unit_dict[self.__class__.__name__]
 
-        if self.is_white is True:
+        if self.is_white:
             self.name = 'w' + self.unit
         else:
             self.name = 'b' + self.unit
@@ -31,12 +31,12 @@ class Piece:
         return self.__class__.__name__ + \
             f"({self.row}, {self.col}, is_white={self.is_white})"
 
-    def get_moves(self):
+    def get_moves(self, game):
         raise NotImplementedError
 
 
 class Pawn(Piece):
-    """docstring for Pawn"""
+    """Ruleset for pawns"""
 
     def __init__(self, row, col, is_white, first_move=True):
         super().__init__(row, col, is_white)
@@ -47,7 +47,7 @@ class Pawn(Piece):
         fwd = -1 if self.is_white is True else 1
 
         # basic move
-        if isinstance(game.get_piece(self.row + fwd, self.col), Null):
+        if isinstance(game[(self.row + fwd, self.col)], Null):
             moves.append((self.row + fwd, self.col))
             if self.first_move:
                 moves.append((self.row + 2 * fwd, self.col))
@@ -57,7 +57,7 @@ class Pawn(Piece):
             if self.col + side in (-1, DIM):
                 continue
 
-            piece = game.get_piece(self.row + fwd, self.col + side)
+            piece = game[(self.row + fwd, self.col + side)]
             if not isinstance(piece, Null):
                 if piece.is_white != self.is_white:
                     moves.append((self.row + fwd, self.col + side))
