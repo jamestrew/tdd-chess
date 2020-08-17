@@ -16,6 +16,17 @@ class Board:
         'k': King
     }
 
+    # Rank - File notation
+    files = {  # "columns"
+        0: 'a', 1: 'b', 2: 'c', 3: 'd',
+        4: 'e', 5: 'f', 6: 'g', 7: 'h'
+    }
+
+    ranks = {  # "rows"
+        0: 8, 1: 7, 2: 6, 3: 5,
+        4: 4, 5: 3, 6: 2, 7: 1
+    }
+
     def __init__(self, player_white, white_to_move=True, array=None):
         self.player_white = True if player_white is True else False
         self.opponent_white = not self.player_white
@@ -78,5 +89,8 @@ class Board:
             array.append(row)
         return array
 
-    def get_piece(self, row, col):
-        return self.board[row][col]
+    def __getitem__(self, coord):
+        return self.board[coord[0]][coord[1]]
+
+    def __setitem__(self, coord, piece):
+        self.board[coord[0]][coord[1]] = piece
