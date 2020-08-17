@@ -1,4 +1,4 @@
-from chess.pieces import Piece
+from chess.pieces import *
 
 
 def test_piece_init():
@@ -6,4 +6,5 @@ def test_piece_init():
 
     assert piece.row == 0
     assert piece.col == 0
-    assert piece.white is True
+    assert piece.is_white is True
+    assert piece.name == 'wx'
