@@ -1,7 +1,6 @@
 import pytest
 
 from chess.board import Board
-from chess.constants import *
 
 
 @pytest.fixture

@@ -54,3 +54,6 @@ class Board:
                 row.append(self.board[i][j].name)
             array.append(row)
         return array
+
+    def get_piece(self, row, col):
+        return self.board[row][col]
