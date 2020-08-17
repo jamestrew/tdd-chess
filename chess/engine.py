@@ -11,8 +11,6 @@ class Move:
         self.from_piece = game[(self.from_row, self.from_col)]
         self.dest_piece = game[(self.dest_row, self.dest_col)]
 
-        # self.moves = self.from_piece.get_moves(self.game)
-
     def execute(self):
         self.game[(self.from_row, self.from_col)] = Null()
         self.game[(self.dest_row, self.dest_col)] = self.from_piece
