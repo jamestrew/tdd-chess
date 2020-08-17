@@ -39,61 +39,60 @@ def board_basic():
 
 
 def test_pawn_get_moves_first_white(board_basic):
-    pawn = Pawn(6, 3, True)
     board = Board(player_white=True, array=board_basic, white_to_move=True)
+    pawn = board[(6, 3)]
     assert pawn.get_moves(board) == [(5, 3), (4, 3)]
 
 
 def test_pawn_get_moves_first_black(board_basic):
-    pawn = Pawn(1, 3, False)
     board = Board(player_white=True, array=board_basic, white_to_move=True)
+    pawn = board[(1, 3)]
     assert pawn.get_moves(board) == [(2, 3), (3, 3)]
 
 
 def test_pawn_get_moves_second_white(board_basic):
-    pawn = Pawn(5, 4, True, False)
     board = Board(player_white=True, array=board_basic, white_to_move=True)
-    board = Board(player_white=True, array=board_basic, white_to_move=True)
+    pawn = board[(5, 4)]
     assert pawn.get_moves(board) == [(4, 4)]
 
 
 def test_pawn_get_moves_second_black(board_basic):
-    pawn = Pawn(2, 4, False, False)
     board = Board(player_white=True, array=board_basic, white_to_move=True)
+    pawn = board[(2, 4)]
     assert pawn.get_moves(board) == [(3, 4)]
 
 
 def test_pawn_blocked_white(board_basic):
-    pawn = Pawn(4, 7, True)
     board = Board(player_white=True, array=board_basic, white_to_move=True)
+    pawn = board[(4, 7)]
     assert pawn.get_moves(board) == []
 
 
 def test_pawn_blocked_black(board_basic):
-    pawn = Pawn(3, 7, False)
     board = Board(player_white=True, array=board_basic, white_to_move=True)
+    pawn = board[(3, 7)]
     assert pawn.get_moves(board) == []
 
 
 def test_pawn_capt_white(board_basic):
-    pawn = Pawn(4, 1, True, False)
     board = Board(player_white=True, array=board_basic, white_to_move=True)
+    pawn = board[(4, 1)]
     assert pawn.get_moves(board) == [(3, 0)]
 
 
 def test_pawn_capt_black(board_basic):
-    pawn = Pawn(3, 1, False, False)
     board = Board(player_white=True, array=board_basic, white_to_move=True)
+    pawn = board[(3, 1)]
     assert pawn.get_moves(board) == [(4, 0)]
 
 
 def test_pawn_capt_white_edge(board_basic):
-    pawn = Pawn(4, 0, True, False)
     board = Board(player_white=True, array=board_basic, white_to_move=True)
+    pawn = board[(4, 0)]
     assert pawn.get_moves(board) == [(3, 1)]
 
 
 def test_pawn_capt_black_edge(board_basic):
-    pawn = Pawn(3, 0, False, False)
     board = Board(player_white=True, array=board_basic, white_to_move=True)
+    pawn = board[(3, 0)]
     assert pawn.get_moves(board) == [(4, 1)]
