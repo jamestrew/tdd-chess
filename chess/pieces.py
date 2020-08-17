@@ -34,6 +34,12 @@ class Piece:
     def get_moves(self, game):
         raise NotImplementedError
 
+    def _check_capture(self, new_r, new_c, game):
+        piece = game[(new_r, new_c)]
+        if not isinstance(piece, Null):
+            if piece.is_white != self.is_white:
+                return (new_r, new_c)
+
 
 class Pawn(Piece):
     """Ruleset for pawns"""
@@ -43,24 +49,24 @@ class Pawn(Piece):
         self.first_move = first_move
 
     def get_moves(self, game):
+        row = self.row
+        col = self.col
         moves = []
         fwd = -1 if self.is_white is True else 1
 
         # basic move
-        if isinstance(game[(self.row + fwd, self.col)], Null):
-            moves.append((self.row + fwd, self.col))
+        if isinstance(game[(row + fwd, col)], Null):
+            moves.append((row + fwd, col))
             if self.first_move:
-                moves.append((self.row + 2 * fwd, self.col))
+                moves.append((row + 2 * fwd, col))
 
         # basic capture
         for side in [-1, 1]:
-            if self.col + side in (-1, DIM):
+            if col + side in (-1, DIM):
                 continue
 
-            piece = game[(self.row + fwd, self.col + side)]
-            if not isinstance(piece, Null):
-                if piece.is_white != self.is_white:
-                    moves.append((self.row + fwd, self.col + side))
+            if self._check_capture(row + fwd, col + side, game) is not None:
+                moves.append((row + fwd, col + side))
 
         return moves
 
