@@ -94,3 +94,18 @@ class Board:
 
     def __setitem__(self, coord, piece):
         self.board[coord[0]][coord[1]] = piece
+
+    def __str__(self):
+        array = ""
+        for i in range(DIM + 1):
+            row = ""
+            if i < DIM:
+                for j in range(DIM + 1):
+                    if j < DIM:
+                        row += self.board[i][j].name + " "
+                    else:
+                        row += str(DIM - i) + "\n"
+                array += row
+            else:
+                array += "-a -b -c -d -e -f -g -h"
+        return array

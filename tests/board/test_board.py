@@ -76,3 +76,14 @@ def test_board_init_from_array():
     assert board.to_array() == test_board
     assert board[(3, 1)].first_move is False
     assert board[(1, 5)].name == 'bp'
+
+
+def test_board_print():
+    board = Board(player_white=True, white_to_move=True)
+    board_str = "br bn bb bq bk bb bn br 8\nbp bp bp bp bp bp bp bp 7\n" + \
+                "-- -- -- -- -- -- -- -- 6\n-- -- -- -- -- -- -- -- 5\n" + \
+                "-- -- -- -- -- -- -- -- 4\n-- -- -- -- -- -- -- -- 3\n" + \
+                "wp wp wp wp wp wp wp wp 2\nwr wn wb wq wk wb wn wr 1\n" + \
+                "-a -b -c -d -e -f -g -h"
+
+    assert board.__str__() == board_str
