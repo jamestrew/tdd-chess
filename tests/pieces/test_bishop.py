@@ -4,19 +4,6 @@ from chess.board import Board
 import pytest
 
 
-def test_bishop_init():
-    bishop = Bishop(0, 2, False)
-
-    assert bishop.row == 0
-    assert bishop.col == 2
-    assert bishop.is_white is False
-    assert bishop.unit == 'b'
-    assert bishop.name == 'bb'
-
-    rep = bishop.__repr__()
-    assert rep == "Bishop(0, 2, is_white=False)"
-
-
 @pytest.fixture
 def board():
     return [
