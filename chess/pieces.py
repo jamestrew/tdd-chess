@@ -81,28 +81,21 @@ class Bishop(Piece):
     def get_moves(self, game):
         moves = []
 
-        def _check_move(new_r, new_c):
-            """ [Helper function] may be moved to superclass in the future
-                Add move. Returns False if a capture is possible.
-                Return False causes a break.
-            """
-            if isinstance(game[(new_r, new_c)], Null):
-                moves.append((new_r, new_c))
-                return True
-            elif self._check_capture(new_r, new_c, game):
-                moves.append((new_r, new_c))
-                return False
-            return False
-
         def append(dx, dy):
             multi = 1
             while True:
                 new_r = self.row + multi * dx
                 new_c = self.col + multi * dy
+                sqr = (new_r, new_c)
 
                 if new_r < 0 or new_r >= DIM or new_c < 0 or new_c >= DIM:
                     break
-                if not _check_move(new_r, new_c):
+                if isinstance(game[sqr], Null):
+                    moves.append(sqr)
+                elif self._check_capture(new_r, new_c, game):
+                    moves.append(sqr)
+                    break
+                else:
                     break
                 multi += 1
 
@@ -124,12 +117,14 @@ class Night(Piece):
 
             new_r = self.row + dx
             new_c = self.col + dy
+            sqr = (new_r, new_c)
+
             if new_r < 0 or new_r >= DIM or new_c < 0 or new_c >= DIM:
                 continue
-            if isinstance(game[(new_r, new_c)], Null):
-                moves.append((new_r, new_c))
-            if self._check_capture(new_r, new_c, game):
-                moves.append((new_r, new_c))
+            if isinstance(game[sqr], Null):
+                moves.append(sqr)
+            elif self._check_capture(new_r, new_c, game):
+                moves.append(sqr)
         return moves
 
 
