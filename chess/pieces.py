@@ -76,6 +76,11 @@ class Pawn(Piece):
         self.first_move = first_move
 
     def get_moves(self, game):
+        """
+            To-do:
+                - enable en Passant
+                - enable promotion
+        """
         row = self.row
         col = self.col
         moves = []
@@ -101,6 +106,10 @@ class Pawn(Piece):
 class Rook(Piece):
 
     def get_moves(self, game):
+        """
+            To-do:
+                - enable castling
+        """
         self.moves = []
 
         for dx, dy in permutations([1, -1, 0], 2):
@@ -135,6 +144,11 @@ class Night(Piece):
 class King(Piece):
 
     def get_moves(self, game):
+        """
+        To-do:
+            - eliminate suicidal tendencies
+            - incorporate castling
+        """
         self.moves = []
 
         for dx in (-1, 1):
