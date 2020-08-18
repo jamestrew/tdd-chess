@@ -1,5 +1,6 @@
 """ Engine module (Use Cases) """
 from chess.pieces import Null
+from chess.constants import *
 
 class Move:
 
@@ -24,3 +25,20 @@ class Move:
         """ Convert array row/col to chess grid notation """
         return str(self.game.files[self.dest_col]
                    + str(self.game.ranks[self.dest_row]))  # noqa
+
+
+class GetMoves:
+    """ Get a list of all possible moves.
+        Facilitates controller.Select
+    """
+
+    def get_all_moves(self, game):
+        self.all_moves = []
+        for i in range(DIM):
+            for j in range(DIM):
+                piece = game[(i, j)]
+                if isinstance(piece, Null):
+                    continue
+                if (move := piece.get_moves(game)):
+                    self.all_moves.extend(move)
+        return set(self.all_moves)
