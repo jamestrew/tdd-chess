@@ -41,6 +41,19 @@ class Piece:
         if not isinstance(piece, Null):
             return piece.is_white != self.is_white
 
+    def _check_move(new_r, new_c):
+        """ [Helper function] - currently unused.
+            Add move. Returns False if a capture is possible.
+            Return False causes a break.
+        """
+        if isinstance(game[(new_r, new_c)], Null):
+            moves.append((new_r, new_c))
+            return True
+        elif self._check_capture(new_r, new_c, game):
+            moves.append((new_r, new_c))
+            return False
+        return False
+
 
 class Pawn(Piece):
     """Ruleset for pawns"""
@@ -73,7 +86,32 @@ class Pawn(Piece):
 
 
 class Rook(Piece):
-    pass
+
+    def get_moves(self, game):
+        moves = []
+
+        def append(dx, dy):
+            multi = 1
+            while True:
+                new_r = self.row + multi * dx
+                new_c = self.col + multi * dy
+                sqr = (new_r, new_c)
+
+                if new_r < 0 or new_r >= DIM or new_c < 0 or new_c >= DIM:
+                    break
+                if isinstance(game[sqr], Null):
+                    moves.append(sqr)
+                elif self._check_capture(new_r, new_c, game):
+                    moves.append(sqr)
+                    break
+                else:
+                    break
+                multi += 1
+
+        for dx, dy in permutations([1, -1, 0], 2):
+            if abs(dx) != abs(dy):
+                append(dx, dy)
+        return moves
 
 
 class Bishop(Piece):
