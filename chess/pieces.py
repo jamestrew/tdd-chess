@@ -41,8 +41,11 @@ class Piece:
         if not isinstance(piece, Null):
             return piece.is_white != self.is_white
 
-    def _range_append(self, dx, dy, game):
-        """ Appends move to moves for pieces with inf range """
+    def _append(self, dx, dy, game, short=False):
+        """ Appends move to moves for pieces.
+            Use 'short=False' for (Rook, Bishop, Queen).
+            Use 'short=True' for (King, Night).
+        """
         multi = 1
         while True:
             new_r = self.row + multi * dx
@@ -53,24 +56,16 @@ class Piece:
                 break
             if isinstance(game[sqr], Null):
                 self.moves.append(sqr)
+                if short:
+                    return
             elif self._check_capture(new_r, new_c, game):
                 self.moves.append(sqr)
+                if short:
+                    return
                 break
             else:
                 break
             multi += 1
-
-    def _close_append(self, dx, dy, game):
-        new_r = self.row + dx
-        new_c = self.col + dy
-        sqr = (new_r, new_c)
-
-        if new_r < 0 or new_r >= DIM or new_c < 0 or new_c >= DIM:
-            return
-        if isinstance(game[sqr], Null):
-            self.moves.append(sqr)
-        elif self._check_capture(new_r, new_c, game):
-            self.moves.append(sqr)
 
 
 class Pawn(Piece):
@@ -110,7 +105,7 @@ class Rook(Piece):
 
         for dx, dy in permutations([1, -1, 0], 2):
             if abs(dx) != abs(dy):
-                self._range_append(dx, dy, game)
+                self._append(dx, dy, game)
         return self.moves
 
 
@@ -121,7 +116,7 @@ class Bishop(Piece):
 
         for dx in (-1, 1):
             for dy in (-1, 1):
-                self._range_append(dx, dy, game)
+                self._append(dx, dy, game)
         return self.moves
 
 
@@ -133,7 +128,7 @@ class Night(Piece):
 
         for dx, dy in permutations([1, 2, -1, -2], 2):
             if abs(dx) != abs(dy):
-                self._close_append(dx, dy, game)
+                self._append(dx, dy, game, short=True)
         return self.moves
 
 
