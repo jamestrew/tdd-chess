@@ -22,5 +22,5 @@ class Move:
 
     def _get_rank_file(self):
         """ Convert array row/col to chess grid notation """
-        return str(self.game.files[self.dest_col] +
-                   str(self.game.ranks[self.dest_row]))
+        return str(self.game.files[self.dest_col]
+                   + str(self.game.ranks[self.dest_row]))  # noqa
