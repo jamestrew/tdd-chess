@@ -78,12 +78,31 @@ def test_board_init_from_array():
     assert board[(1, 5)].name == 'bp'
 
 
-def test_board_print():
+def test_board_print_white():
     board = Board(player_white=True, white_to_move=True)
-    board_str = "br bn bb bq bk bb bn br 8\nbp bp bp bp bp bp bp bp 7\n" + \
-                "-- -- -- -- -- -- -- -- 6\n-- -- -- -- -- -- -- -- 5\n" + \
-                "-- -- -- -- -- -- -- -- 4\n-- -- -- -- -- -- -- -- 3\n" + \
-                "wp wp wp wp wp wp wp wp 2\nwr wn wb wq wk wb wn wr 1\n" + \
+    board_str = "br bn bb bq bk bb bn br 8\n" + \
+                "bp bp bp bp bp bp bp bp 7\n" + \
+                "-- -- -- -- -- -- -- -- 6\n" + \
+                "-- -- -- -- -- -- -- -- 5\n" + \
+                "-- -- -- -- -- -- -- -- 4\n" + \
+                "-- -- -- -- -- -- -- -- 3\n" + \
+                "wp wp wp wp wp wp wp wp 2\n" + \
+                "wr wn wb wq wk wb wn wr 1\n" + \
                 "-a -b -c -d -e -f -g -h"
+
+    assert board.__str__() == board_str
+
+
+def test_board_print_black():
+    board = Board(player_white=False, white_to_move=True)
+    board_str = "wr wn wb wk wq wb wn wr 1\n" + \
+                "wp wp wp wp wp wp wp wp 2\n" + \
+                "-- -- -- -- -- -- -- -- 3\n" + \
+                "-- -- -- -- -- -- -- -- 4\n" + \
+                "-- -- -- -- -- -- -- -- 5\n" + \
+                "-- -- -- -- -- -- -- -- 6\n" + \
+                "bp bp bp bp bp bp bp bp 7\n" + \
+                "br bn bb bk bq bb bn br 8\n" + \
+                "-h -g -f -e -d -c -b -a"
 
     assert board.__str__() == board_str

@@ -104,8 +104,14 @@ class Board:
                     if j < DIM:
                         row += self.board[i][j].name + " "
                     else:
-                        row += str(DIM - i) + "\n"
+                        if self.player_white:
+                            row += str(DIM - i) + "\n"
+                        else:
+                            row += str(i + 1) + "\n"
                 array += row
             else:
-                array += "-a -b -c -d -e -f -g -h"
+                if self.player_white:
+                    array += "-a -b -c -d -e -f -g -h"
+                else:
+                    array += "-h -g -f -e -d -c -b -a"
         return array
