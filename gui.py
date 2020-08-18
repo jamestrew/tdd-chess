@@ -6,7 +6,7 @@ from chess.board import Board
 
 pg.init()
 pg.font.init()
-pg.display.set_caption("GAY CHESS")
+pg.display.set_caption("TDD CHESS")
 
 
 def load_images():
@@ -15,14 +15,14 @@ def load_images():
     Access img by IMAGES['wp'] --> white pawn img
     """
     pieces = ['r', 'n', 'b', 'q', 'k', 'p']
-    path = 'chess/assets'
+    path = 'chess\\assets'
     for piece in pieces:
         # load black pieces
-        img = pg.image.load(os.path.join("chess", "assets", "b" + piece + ".png"))
+        img = pg.image.load(os.path.join(path, "b" + piece + ".png"))
         IMAGES['b' + piece] = pg.transform.scale(img, (SQ_SIZE, SQ_SIZE))
 
         # load white pieces
-        img = pg.image.load(os.path.join("chess", "assets", "w" + piece + ".png"))
+        img = pg.image.load(os.path.join(path, "w" + piece + ".png"))
         IMAGES['w' + piece] = pg.transform.scale(img, (SQ_SIZE, SQ_SIZE))
 
 
@@ -31,8 +31,7 @@ def draw_board(screen):
 
     # Background border
     pg.draw.rect(screen, pg.Color(BORDER),
-                 (0, 0, B_WIDTH + 2 * BORD, B_HEIGHT + 2 * BORD)
-                 )
+                 (0, 0, B_WIDTH + 2 * BORD, B_HEIGHT + 2 * BORD))
 
     # Rank/file labels
     label_font = pg.font.SysFont('arial', 20)
@@ -59,12 +58,10 @@ def draw_board(screen):
             if x % 200 == BORD and y % 200 == BORD or \
                     x % 200 != BORD and y % 200 != BORD:
                 pg.draw.rect(screen, pg.Color(LIGHT_GRID),
-                             (x, y, SQ_SIZE, SQ_SIZE)
-                             )
+                             (x, y, SQ_SIZE, SQ_SIZE))
             else:
                 pg.draw.rect(screen, pg.Color(DARK_GRID),
-                             (x, y, SQ_SIZE, SQ_SIZE)
-                             )
+                             (x, y, SQ_SIZE, SQ_SIZE))
 
 
 def draw_pos_moves(screen, board, selection):
