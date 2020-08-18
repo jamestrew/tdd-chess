@@ -147,7 +147,17 @@ class King(Piece):
 
 
 class Queen(Piece):
-    pass
+
+    def get_moves(self, game):
+        self.moves = []
+
+        for dx in (-1, 1):
+            for dy in (-1, 1):
+                self._append(dx, dy, game)
+        for dx, dy in permutations([1, -1, 0], 2):
+            if abs(dx) != abs(dy):
+                self._append(dx, dy, game)
+        return self.moves
 
 
 class Null:
