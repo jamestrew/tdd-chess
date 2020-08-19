@@ -40,3 +40,18 @@ def get_all_moves(game):
             if (move := piece.get_moves(game)):
                 all_moves.extend(move)
     return set(all_moves)
+
+
+def get_location(game):
+    """ Get a list of location of all pieces for the correct turn """
+    turn_white = game.white_to_move
+
+    location = []
+    for i in range(DIM):
+        for j in range(DIM):
+            piece = game[(i, j)]
+            if isinstance(piece, Null) or piece.is_white != turn_white:
+                continue
+
+            location.append((piece.row, piece.col))
+    return location
