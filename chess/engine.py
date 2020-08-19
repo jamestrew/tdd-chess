@@ -15,7 +15,6 @@ class Move:
     def execute(self):
         self.game[self.pos_1] = Null()
         self.game[self.pos_2] = self.from_piece
-        self.from_piece.row, self.from_piece.col = self.pos_2
 
         self.game.moves.append(self._get_rank_file())
         self.game.white_to_move = not self.game.white_to_move

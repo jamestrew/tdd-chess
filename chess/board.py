@@ -94,6 +94,8 @@ class Board:
 
     def __setitem__(self, coord, piece):
         self.board[coord[0]][coord[1]] = piece
+        piece.row = coord[0]
+        piece.col = coord[1]
 
     def __str__(self):
         array = ""

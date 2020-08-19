@@ -65,11 +65,6 @@ def draw_board(screen):
                              (x, y, SQ_SIZE, SQ_SIZE))
 
 
-def draw_pos_moves(screen, board, selection):
-    """ Draw all possible moves, incl takes/castle etc"""
-    pass
-
-
 def draw_pieces(screen, board):
     """
     Draw the moving of pieces.
@@ -104,7 +99,6 @@ def draw_last_move(screen, game):
 
 def draw_game(screen, game):
     draw_board(screen)
-    # draw_pos_moves(screen, game.board, selection)  # for future
     draw_pieces(screen, game.board)
 
 
