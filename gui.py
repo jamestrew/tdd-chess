@@ -3,6 +3,7 @@ import os
 from chess.constants import *
 
 from chess.board import Board
+from chess.controller import Select
 
 pg.init()
 pg.font.init()
@@ -116,15 +117,29 @@ def main():
     screen.fill(pg.Color(BACKGROUND))
 
     game = Board(player_white=True)
+    select = Select()
     load_images()
 
     running = True
     while running:
+        draw_game(screen, game)
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 running = False
+            if event.type == pg.MOUSEBUTTONDOWN:
+                location = pg.mouse.get_pos()
+                if location[0] < BORD or location[0] > B_WIDTH + BORD \
+                        or location[1] < BORD or location[1] > B_HEIGHT + BORD:
+                    # checks that click locations is within bound of the board
+                    continue
+                position = (location[1] // SQ_SIZE, location[0] // SQ_SIZE)
+                suggestions = select.make_selection(position, game)
 
-        draw_game(screen, game)
+        try:
+            if suggestions:
+                draw_move_suggestions(screen, suggestions)
+        except UnboundLocalError:
+            pass
         clock.tick(MAX_FPS)
         pg.display.flip()
 
