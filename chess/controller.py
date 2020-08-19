@@ -9,24 +9,21 @@ class Select:
 
     def __init__(self):
         self.pos_1 = None
-        self.piece = None
         self.moves = []
 
     def make_selection(self, select, game):
         if select in engine.get_location(game):
             self.pos_1 = select
-            self.piece = game[select]
             self.moves = game[select].get_moves(game)
-            return
+            return self.moves
 
         if self.pos_1 and select in self.moves:
-            engine.Move(self.pos_1, select, game)
+            engine.Move(self.pos_1, select, game).execute()
             self._reset()
-            return "engine.Move(self.pos_1, self.pos_2, game).execute()"
+            # return "engine.Move(self.pos_1, select, game).execute()"
 
         self._reset()
 
     def _reset(self):
         self.pos_1 = None
-        self.piece = None
         self.moves = []
