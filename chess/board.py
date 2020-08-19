@@ -27,8 +27,8 @@ class Board:
         4: 4, 5: 3, 6: 2, 7: 1
     }
 
-    def __init__(self, player_white, white_to_move=True, array=None):
-        self.player_white = True if player_white is True else False
+    def __init__(self, player_white=True, white_to_move=True, array=None):
+        self.player_white = player_white
         self.opponent_white = not self.player_white
         self.white_to_move = white_to_move
         self.moves = []

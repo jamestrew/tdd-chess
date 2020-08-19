@@ -27,18 +27,16 @@ class Move:
                    + str(self.game.ranks[self.dest_row]))  # noqa
 
 
-class GetMoves:
+def get_all_moves(game):
     """ Get a list of all possible moves.
-        Facilitates controller.Select
+    Facilitates controller.Select
     """
-
-    def get_all_moves(self, game):
-        self.all_moves = []
-        for i in range(DIM):
-            for j in range(DIM):
-                piece = game[(i, j)]
-                if isinstance(piece, Null):
-                    continue
-                if (move := piece.get_moves(game)):
-                    self.all_moves.extend(move)
-        return set(self.all_moves)
+    all_moves = []
+    for i in range(DIM):
+        for j in range(DIM):
+            piece = game[(i, j)]
+            if isinstance(piece, Null):
+                continue
+            if (move := piece.get_moves(game)):
+                all_moves.extend(move)
+    return set(all_moves)
