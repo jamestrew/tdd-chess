@@ -7,15 +7,15 @@ from unittest import mock
 
 
 @pytest.fixture
-def game_grid_white():
+def game_grid():
     return [
         ["br", "bn", "bb", "bq", "bk", "bb", "bn", "br"],
-        ["bp", "bp", "bp", "bp", "bp", "bp", "bp", "bp"],
+        ["bp", "bp", "bp", "bp", "--", "bp", "bp", "bp"],
         ["--", "--", "--", "--", "--", "--", "--", "--"],
+        ["--", "--", "--", "--", "bp", "--", "--", "--"],
+        ["--", "--", "--", "wp", "--", "--", "--", "--"],
         ["--", "--", "--", "--", "--", "--", "--", "--"],
-        ["--", "--", "--", "--", "--", "--", "--", "--"],
-        ["--", "--", "--", "--", "--", "--", "--", "--"],
-        ["wp", "wp", "wp", "wp", "wp", "wp", "wp", "wp"],
+        ["wp", "wp", "wp", "--", "wp", "wp", "wp", "wp"],
         ["wr", "wn", "wb", "wq", "wk", "wb", "wn", "wr"]
     ]
 
@@ -79,7 +79,7 @@ def test_select_second_valid():
 
     assert select.pos_1 is None
     assert select.moves == []
-    assert move == "engine.Move(self.pos_1, self.pos_2, game).execute()"
+    assert move == "engine.Move(self.pos_1, select, game).execute()"
 
 
 def test_select_second_same():
@@ -102,3 +102,27 @@ def test_select_second_new():
 
     assert select.pos_1 == (6, 2)
     assert set(select.moves) == set([(5, 2), (4, 2)])
+
+# --- Capture --- #
+
+
+def test_select_precapture_black(game_grid):
+    game = Board(array=game_grid)
+    select = Select()
+
+    select.make_selection((4, 3), game)
+
+    assert select.pos_1 == (4, 3)
+    assert set(select.moves) == set([(3, 3), (3, 4)])
+
+
+def test_select_capture_black(game_grid):
+    game = Board(array=game_grid)
+    select = Select()
+
+    select.make_selection((4, 3), game)
+    move = select.make_selection((3, 4), game)
+
+    assert select.pos_1 is None
+    assert select.moves == []
+    assert move == "engine.Move(self.pos_1, select, game).execute()"

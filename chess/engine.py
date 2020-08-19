@@ -4,17 +4,18 @@ from chess.constants import *
 
 class Move:
 
-    def __init__(self, p1, p2, game):
-        self.from_row, self.from_col = p1
-        self.dest_row, self.dest_col = p2
+    def __init__(self, pos_1, pos_2, game):
+        self.pos_1 = pos_1
+        self.pos_2 = pos_2
         self.game = game
 
-        self.from_piece = game[(self.from_row, self.from_col)]
-        self.dest_piece = game[(self.dest_row, self.dest_col)]
+        self.from_piece = game[pos_1]
+        self.dest_piece = game[pos_2]
 
     def execute(self):
-        self.game[(self.from_row, self.from_col)] = Null()
-        self.game[(self.dest_row, self.dest_col)] = self.from_piece
+        self.game[self.pos_1] = Null()
+        self.game[self.pos_2] = self.from_piece
+        self.from_piece.row, self.from_piece.col = self.pos_2
 
         self.game.moves.append(self._get_rank_file())
         self.game.white_to_move = not self.game.white_to_move
@@ -23,8 +24,8 @@ class Move:
 
     def _get_rank_file(self):
         """ Convert array row/col to chess grid notation """
-        return str(self.game.files[self.dest_col]
-                   + str(self.game.ranks[self.dest_row]))  # noqa
+        return str(self.game.files[self.pos_2[1]]
+                   + str(self.game.ranks[self.pos_2[0]]))  # noqa
 
 
 def get_all_moves(game):
@@ -52,6 +53,5 @@ def get_location(game):
             piece = game[(i, j)]
             if isinstance(piece, Null) or piece.is_white != turn_white:
                 continue
-
             location.append((piece.row, piece.col))
     return location
