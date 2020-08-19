@@ -1,5 +1,5 @@
 """ Engine module (Use Cases) """
-from chess.pieces import Null
+from chess.pieces import *
 from chess.constants import *
 
 class Move:
@@ -27,24 +27,27 @@ class Move:
                    + str(self.game.ranks[self.pos_2[0]]))  # noqa
 
 
-def get_all_moves(game):
+def get_all_moves(game, for_white):
     """ Get a list of all possible moves.
     Facilitates controller.Select
     """
+
     all_moves = []
     for i in range(DIM):
         for j in range(DIM):
             piece = game[(i, j)]
-            if isinstance(piece, Null):
+            if isinstance(piece, Null) or piece.is_white != for_white:
                 continue
             if (move := piece.get_moves(game)):
                 all_moves.extend(move)
     return set(all_moves)
 
 
-def get_location(game):
-    """ Get a list of location of all pieces for the correct turn """
-    turn_white = game.white_to_move
+def get_location(game, turn_white=None, find_king=False):
+    """ Get a list of location of all pieces either color.
+        By default, returns the color of the current turn.
+    """
+    turn_white = game.white_to_move if turn_white is None else turn_white
 
     location = []
     for i in range(DIM):
@@ -52,5 +55,15 @@ def get_location(game):
             piece = game[(i, j)]
             if isinstance(piece, Null) or piece.is_white != turn_white:
                 continue
+            if find_king:
+                if not isinstance(piece, King):
+                    continue
             location.append((piece.row, piece.col))
-    return location
+    return set(location)
+
+
+def check_check(game, turn_white):
+    opp_moves = get_all_moves(game, for_white=(not turn_white))
+    king_pos = get_location(game, turn_white=turn_white, find_king=True)
+
+    return list(king_pos).pop() in opp_moves
