@@ -24,59 +24,81 @@ def test_select_init():
     select = Select()
 
     assert select.pos_1 is None
-    assert select.pos_2 is None
-    assert select.piece is None
     assert select.moves == []
 
 
-def test_select_piece_one_white():
+def test_select_first_valid():
     game = Board()
     select = Select()
 
     select.make_selection((6, 3), game)
 
     assert select.pos_1 == (6, 3)
-    assert select.piece.name == 'wp'
     assert set(select.moves) == set([(5, 3), (4, 3)])
-    assert select.pos_2 is None
 
 
-def test_select_empty():
+def test_select_first_invalid_black():
+    game = Board()
+    select = Select()
+
+    select.make_selection((1, 0), game)
+
+    assert select.pos_1 is None
+    assert select.moves == []
+
+
+def test_select_first_empty():
     game = Board()
     select = Select()
 
     select.make_selection((3, 3), game)
 
     assert select.pos_1 is None
-    assert select.piece is None
     assert select.moves == []
-    assert select.pos_2 is None
 
 
-def test_select_make_selection_two_valid_white():
+# --- First move valid --- #
+
+def test_select_second_empty():
     game = Board()
     select = Select()
 
     select.make_selection((6, 3), game)
-    select.make_selection((4, 3), game)
-
-    assert select.pos_1 == 1 (6, 3)
-    assert select.piece.name == 'wp'
-    assert set(select.moves) == set([(5, 3), (4, 3)])
-    assert select.pos_2 == 1 (4, 3)
-
-
-def test_select_make_selection_two_invalid_white():
-    game = Board()
-    select = Select()
-    select.make_selection((6, 3), game)
-    select.make_selection((4, 0), game)
+    select.make_selection((3, 3), game)
 
     assert select.pos_1 is None
-    assert select.piece is None
     assert select.moves == []
-    assert select.pos_2 is None
 
 
-# def test_select_make_select_three_valid():
-#     pass
+def test_select_second_valid():
+    game = Board()
+    select = Select()
+
+    select.make_selection((6, 3), game)
+    move = select.make_selection((4, 3), game)
+
+    assert select.pos_1 is None
+    assert select.moves == []
+    assert move == "engine.Move(self.pos_1, self.pos_2, game).execute()"
+
+
+def test_select_second_same():
+    game = Board()
+    select = Select()
+
+    select.make_selection((6, 3), game)
+    select.make_selection((6, 3), game)
+
+    assert select.pos_1 == (6, 3)
+    assert set(select.moves) == set([(5, 3), (4, 3)])
+
+
+def test_select_second_new():
+    game = Board()
+    select = Select()
+
+    select.make_selection((6, 3), game)
+    select.make_selection((6, 2), game)
+
+    assert select.pos_1 == (6, 2)
+    assert set(select.moves) == set([(5, 2), (4, 2)])
