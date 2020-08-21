@@ -2,12 +2,11 @@ from chess.engine import Move
 from chess.board import Board
 
 import pytest
-from unittest import mock
 
 
 @pytest.fixture
-def board_basic():
-    return [
+def game_white():
+    arr = [
         ["br", "bn", "bb", "bq", "bk", "bb", "wp", "br"],
         ["--", "--", "--", "bp", "--", "bp", "--", "--"],
         ["--", "--", "bp", "--", "bp", "--", "--", "--"],
@@ -17,11 +16,26 @@ def board_basic():
         ["--", "wp", "--", "wp", "--", "wp", "--", "--"],
         ["wr", "wn", "wb", "wq", "wk", "wb", "bp", "wr"]
     ]
+    return Board(array=arr)
 
 
-def test_pawn_move_init(board_basic):
-    game = Board(player_white=True, array=board_basic, white_to_move=True)
-    move = Move((1, 5), (3, 5), game)
+@pytest.fixture
+def game_black():
+    arr = [
+        ["br", "bn", "bb", "bq", "bk", "bb", "wp", "br"],
+        ["--", "--", "--", "bp", "--", "bp", "--", "--"],
+        ["--", "--", "bp", "--", "bp", "--", "--", "--"],
+        ["bp", "bp", "--", "--", "--", "--", "--", "bp"],
+        ["wp", "wp", "--", "--", "--", "--", "--", "wp"],
+        ["--", "--", "wp", "--", "wp", "--", "--", "--"],
+        ["--", "wp", "--", "wp", "--", "wp", "--", "--"],
+        ["wr", "wn", "wb", "wq", "wk", "wb", "bp", "wr"]
+    ]
+    return Board(array=arr, white_to_move=False)
+
+
+def test_pawn_move_init(game_white):
+    move = Move((1, 5), (3, 5), game_white)
 
     assert move.pos_1 == (1, 5)
     assert move.from_piece.name == 'bp'
@@ -29,9 +43,8 @@ def test_pawn_move_init(board_basic):
     assert move.dest_piece.name == '--'
 
 
-def test_pawn_move_execute(board_basic):
-    game = Board(player_white=True, array=board_basic, white_to_move=False)
-    move = Move((1, 5), (3, 5), game)
+def test_pawn_move_execute(game_black):
+    move = Move((1, 5), (3, 5), game_black)
 
     move.execute()
     new_board = [
@@ -45,15 +58,14 @@ def test_pawn_move_execute(board_basic):
         ["wr", "wn", "wb", "wq", "wk", "wb", "bp", "wr"]
     ]
 
-    assert game.to_array() == new_board
-    assert game.white_to_move is True
-    assert game.moves == ['f5']
+    assert game_black.to_array() == new_board
+    assert game_black.white_to_move is True
+    assert game_black.moves == ['f5']
     assert move.from_piece.first_move is False
 
 
-def test_rook_move_execute(board_basic):
-    game = Board(player_white=True, array=board_basic, white_to_move=False)
-    move = Move((0, 0), (2, 0), game)
+def test_rook_move_execute(game_black):
+    move = Move((0, 0), (2, 0), game_black)
 
     move.execute()
     new_board = [
@@ -67,9 +79,9 @@ def test_rook_move_execute(board_basic):
         ["wr", "wn", "wb", "wq", "wk", "wb", "bp", "wr"]
     ]
 
-    assert game.to_array() == new_board
-    assert game.white_to_move is True
-    assert game.moves == ['a6']
+    assert game_black.to_array() == new_board
+    assert game_black.white_to_move is True
+    assert game_black.moves == ['a6']
 
 
 def test_multiple_moves():

@@ -3,31 +3,20 @@ from chess.engine import *
 
 import pytest
 
-[
-    ["br", "bn", "bb", "bq", "bk", "bb", "bn", "br"],
-    ["bp", "bp", "bp", "bp", "bp", "bp", "bp", "bp"],
-    ["--", "--", "--", "--", "--", "--", "--", "--"],
-    ["--", "--", "--", "--", "--", "--", "--", "--"],
-    ["--", "--", "--", "--", "--", "--", "--", "--"],
-    ["--", "--", "--", "--", "--", "--", "--", "--"],
-    ["wp", "wp", "wp", "wp", "wp", "wp", "wp", "wp"],
-    ["wr", "wn", "wb", "wq", "wk", "wb", "wn", "wr"]
-]
 
-
-def test_no_check_white():
-    game = Board()
-    assert check_check(game, turn_white=True) is False
-
-
-def test_no_check_black():
-    game = Board()
-    assert check_check(game, turn_white=False) is False
+@pytest.mark.parametrize(
+    "white, result", [
+        (True, False),   # white not checked
+        (False, False)   # black not checked
+    ]
+)
+def test_no_checks(start_board, white, result):
+    assert check_check(start_board, turn_white=white) is result
 
 
 @pytest.fixture
 def check_board():
-    return [
+    arr = [
         ["br", "bn", "bb", "--", "bk", "bb", "bn", "br"],
         ["bp", "bp", "--", "bp", "bp", "--", "bp", "bp"],
         ["--", "--", "--", "--", "--", "--", "--", "--"],
@@ -37,14 +26,14 @@ def check_board():
         ["wp", "wp", "wp", "--", "--", "--", "wp", "wp"],
         ["wr", "wn", "wb", "--", "wk", "wb", "wn", "wr"]
     ]
+    return Board(array=arr)
 
 
-def test_check_white(check_board):
-    game = Board(array=check_board)
-
-    assert check_check(game, turn_white=True) is True
-
-
-def test_check_black(check_board):
-    game = Board(array=check_board)
-    assert check_check(game, turn_white=False) is True
+@pytest.mark.parametrize(
+    "white, result", [
+        (True, True),   # white checked
+        (False, True)   # black checked
+    ]
+)
+def test_checks(check_board, white, result):
+    assert check_check(check_board, turn_white=white) is result
