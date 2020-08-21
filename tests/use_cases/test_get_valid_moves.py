@@ -11,3 +11,66 @@ def test_safe_start(start_board):
 
     assert piece.name == 'wp'
     assert set(valid_moves) == set(moves)
+
+
+def test_safe_ish_non_king_move(test_game, test_arr):
+    piece = test_game[(6, 4)]
+    moves = piece.get_moves(test_game)
+    valid_moves = get_valid_moves(test_game, piece)
+
+    assert piece.name == 'wp'
+    assert set(valid_moves) == set(moves)
+    assert test_game.to_array() == test_arr
+
+
+def test_danger_non_king_move(test_game, test_arr):
+    piece = test_game[(6, 5)]
+    valid_moves = get_valid_moves(test_game, piece)
+
+    assert piece.name == 'wp'
+    assert set(valid_moves) == set([])
+    assert test_game.to_array() == test_arr
+
+
+def test_danger_king(test_king_game, test_king_arr):
+    king = test_king_game[(2, 4)]
+    valid_moves = get_valid_moves(test_king_game, king)
+
+    assert king.name == 'wk'
+    assert set(valid_moves) == set([(3, 3), (3, 5)])
+
+
+@pytest.fixture
+def test_arr():
+    return [["br", "bn", "--", "--", "bk", "bb", "bn", "br"],
+            ["bp", "bp", "bp", "bp", "bp", "bp", "bp", "bp"],
+            ["--", "--", "--", "--", "bq", "--", "--", "--"],
+            ["--", "--", "--", "--", "--", "--", "--", "--"],
+            ["--", "--", "--", "--", "--", "--", "--", "bb"],
+            ["--", "--", "--", "--", "--", "--", "--", "--"],
+            ["wp", "wp", "wp", "wp", "wp", "wp", "wp", "wp"],
+            ["wr", "wn", "wb", "wq", "wk", "wb", "wn", "wr"]]
+
+
+@pytest.fixture
+def test_game(test_arr):
+    return Board(array=test_arr)
+
+
+@pytest.fixture
+def test_king_arr():
+    return [
+        ["br", "bn", "bb", "bq", "bk", "bb", "bn", "br"],
+        ["bp", "bp", "bp", "bp", "bp", "bp", "bp", "bp"],
+        ["--", "--", "--", "--", "wk", "--", "--", "--"],
+        ["--", "--", "--", "--", "wp", "--", "--", "--"],
+        ["--", "--", "--", "--", "--", "--", "--", "--"],
+        ["--", "--", "--", "--", "--", "--", "--", "--"],
+        ["wp", "wp", "wp", "wp", "--", "wp", "wp", "wp"],
+        ["wr", "wn", "wb", "wq", "--", "wb", "wn", "wr"]
+    ]
+
+
+@pytest.fixture
+def test_king_game(test_king_arr):
+    return Board(array=test_king_arr)

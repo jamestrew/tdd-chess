@@ -73,6 +73,8 @@ def king_checked(game, turn_white):
 def move_allows_check(game, piece, turn_white=None):
     """ Checks whether moving selected piece will result in
         own king being checked.
+
+        CURRENTLY RELEGATED.
     """
     piece_loc = piece.row, piece.col
     piece_moves = piece.get_moves(game)
@@ -103,10 +105,11 @@ def get_valid_moves(game, piece):
     valid_moves = []
     for move in all_moves:
         game[piece_loc] = Null()
+        capt_piece = game[move]
         game[move] = piece
         if not king_checked(game, turn_white=piece.is_white):
             valid_moves.append(move)
-        game[move] = Null()
+        game[move] = capt_piece
     game[piece_loc] = piece
 
     return valid_moves

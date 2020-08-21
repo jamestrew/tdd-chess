@@ -89,7 +89,7 @@ class Pawn(Piece):
         # basic move
         if isinstance(game[(row + fwd, col)], Null):
             moves.append((row + fwd, col))
-            if self.first_move:
+            if self.first_move and isinstance(game[(row + 2 * fwd, col)], Null):
                 moves.append((row + 2 * fwd, col))
 
         # basic capture
