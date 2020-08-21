@@ -20,7 +20,6 @@ class Select:
         if self.pos_1 and select in self.moves:
             engine.Move(self.pos_1, select, game).execute()
             self._reset()
-            # return "engine.Move(self.pos_1, select, game).execute()"
 
         self._reset()
 

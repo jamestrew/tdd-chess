@@ -74,5 +74,39 @@ def move_allows_check(game, piece, turn_white=None):
     """ Checks whether moving selected piece will result in
         own king being checked.
     """
+    piece_loc = piece.row, piece.col
+    piece_moves = piece.get_moves(game)
 
-    pass
+    for move in piece_moves:
+        # move peek
+        game[piece_loc] = Null()
+        game[move] = piece
+        invalid = king_checked(game, piece.is_white)
+        game[move] = Null()
+        if invalid:
+            break
+    else:
+        invalid = False
+
+    # revert peek
+    game[piece_loc] = piece
+    return invalid
+
+
+def get_valid_moves(game, piece):
+    """ Returns all valid moves (disregards moves which will result in
+        own king being checked.)
+    """
+    all_moves = piece.get_moves(game)
+    piece_loc = piece.row, piece.col
+
+    valid_moves = []
+    for move in all_moves:
+        game[piece_loc] = Null()
+        game[move] = piece
+        if not king_checked(game, turn_white=piece.is_white):
+            valid_moves.append(move)
+        game[move] = Null()
+    game[piece_loc] = piece
+
+    return valid_moves
