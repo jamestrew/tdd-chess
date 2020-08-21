@@ -12,7 +12,7 @@ def test_Rook_init():
     assert rook.is_white is False
     assert rook.first_move is True
     assert rook.name == 'br'
-    assert rep == "Rook(0, 0, is_white=False)"
+    assert rep == "Rook(0, 0, white=False, first=True)"
 
 
 @pytest.mark.parametrize(

@@ -123,6 +123,10 @@ class Rook(Piece):
                 self._append(dx, dy, game)
         return self.moves
 
+    def __repr__(self):
+        return self.__class__.__name__ + \
+            f"({self.row}, {self.col}, white={self.is_white}, first={self.first_move})"
+
 
 class Bishop(Piece):
 

@@ -128,8 +128,34 @@ def get_valid_moves(game, piece):
         game[move] = capt_piece
     game[piece_loc] = piece
 
+    if isinstance(piece, King):
+        valid_moves.append(get_castling(game, piece.is_white))
+
     return valid_moves
 
 
-def check_castling(game, turn_white):
-    king = game[get_location(game, turn_white=turn_white, find_king=True)]
+def get_castling(game, turn_white):
+    """ Returns valid castling moves if possible. """
+    moves = []
+    king = game[get_location(game, turn_white=turn_white, find_piece=King)]
+    rook_locs = get_location(game, turn_white=turn_white, find_piece=Rook)
+    rooks = [game[loc] for loc in rook_locs if game[loc].first_move]
+
+    if not king.first_move or not rooks:
+        return moves
+
+    row = rooks[0].row
+
+    for rook in rooks:
+        delta = abs(rook.col - king.col)
+        if game.player_white:
+            start, end = (5, 7) if delta == 3 else (1, 4)
+            mod = 1
+        else:
+            start, end, mod = (1, 3, 0) if delta == 3 else (4, 7, 1)
+
+        cells = [game[(row, col)] for col in range(start, end)]
+        if not [piece for piece in cells if not isinstance(piece, Null)]:
+            moves.append((row, start + mod))
+    # breakpoint()
+    return moves
