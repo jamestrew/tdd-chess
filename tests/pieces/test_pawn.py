@@ -25,8 +25,8 @@ def test_pawn_init_not_first_move():
 
 
 @pytest.fixture
-def board_basic():
-    return [
+def board():
+    arr = [
         ["br", "bn", "bb", "bq", "bk", "bb", "wp", "br"],
         ["--", "--", "--", "bp", "--", "bp", "--", "--"],
         ["--", "--", "bp", "--", "bp", "--", "--", "--"],
@@ -36,63 +36,23 @@ def board_basic():
         ["--", "wp", "--", "wp", "--", "wp", "--", "--"],
         ["wr", "wn", "wb", "wq", "wk", "wb", "bp", "wr"]
     ]
+    return Board(array=arr)
 
 
-def test_pawn_get_moves_first_white(board_basic):
-    board = Board(player_white=True, array=board_basic, white_to_move=True)
-    pawn = board[(6, 3)]
-    assert pawn.get_moves(board) == [(5, 3), (4, 3)]
-
-
-def test_pawn_get_moves_first_black(board_basic):
-    board = Board(player_white=True, array=board_basic, white_to_move=True)
-    pawn = board[(1, 3)]
-    assert pawn.get_moves(board) == [(2, 3), (3, 3)]
-
-
-def test_pawn_get_moves_second_white(board_basic):
-    board = Board(player_white=True, array=board_basic, white_to_move=True)
-    pawn = board[(5, 4)]
-    assert pawn.get_moves(board) == [(4, 4)]
-
-
-def test_pawn_get_moves_second_black(board_basic):
-    board = Board(player_white=True, array=board_basic, white_to_move=True)
-    pawn = board[(2, 4)]
-    assert pawn.get_moves(board) == [(3, 4)]
-
-
-def test_pawn_blocked_white(board_basic):
-    board = Board(player_white=True, array=board_basic, white_to_move=True)
-    pawn = board[(4, 7)]
-    assert pawn.get_moves(board) == []
-
-
-def test_pawn_blocked_black(board_basic):
-    board = Board(player_white=True, array=board_basic, white_to_move=True)
-    pawn = board[(3, 7)]
-    assert pawn.get_moves(board) == []
-
-
-def test_pawn_capt_white(board_basic):
-    board = Board(player_white=True, array=board_basic, white_to_move=True)
-    pawn = board[(4, 1)]
-    assert pawn.get_moves(board) == [(3, 0)]
-
-
-def test_pawn_capt_black(board_basic):
-    board = Board(player_white=True, array=board_basic, white_to_move=True)
-    pawn = board[(3, 1)]
-    assert pawn.get_moves(board) == [(4, 0)]
-
-
-def test_pawn_capt_white_edge(board_basic):
-    board = Board(player_white=True, array=board_basic, white_to_move=True)
-    pawn = board[(4, 0)]
-    assert pawn.get_moves(board) == [(3, 1)]
-
-
-def test_pawn_capt_black_edge(board_basic):
-    board = Board(player_white=True, array=board_basic, white_to_move=True)
-    pawn = board[(3, 0)]
-    assert pawn.get_moves(board) == [(4, 1)]
+@pytest.mark.parametrize(
+    "coord, moves", [
+        ((6, 3), [(5, 3), (4, 3)]),  # white first move
+        ((1, 3), [(2, 3), (3, 3)]),  # black first move
+        ((5, 4), [(4, 4)]),          # white second move
+        ((2, 4), [(3, 4)]),          # black second move
+        ((4, 7), []),                # white blocked
+        ((3, 7), []),                # black blocked
+        ((4, 1), [(3, 0)]),          # white capture
+        ((3, 1), [(4, 0)]),          # black capture
+        ((4, 0), [(3, 1)]),          # white capture on board edge
+        ((3, 0), [(4, 1)])           # black capture on board edge
+    ]
+)
+def test_pawn_get_moves_first_white(board, coord, moves):
+    pawn = board[coord]
+    assert pawn.get_moves(board) == moves

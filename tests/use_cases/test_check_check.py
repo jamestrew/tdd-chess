@@ -17,12 +17,12 @@ import pytest
 
 def test_no_check_white():
     game = Board()
-    assert check_check(game, turn_white=True) == False
+    assert check_check(game, turn_white=True) is False
 
 
-# def test_no_check_black():
-#     game = Board()
-#     assert check_check(game, turn_white=False) == False
+def test_no_check_black():
+    game = Board()
+    assert check_check(game, turn_white=False) is False
 
 
 @pytest.fixture
