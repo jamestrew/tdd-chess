@@ -59,11 +59,19 @@ def get_location(game, turn_white=None, find_king=False):
                 if not isinstance(piece, King):
                     continue
             location.append((piece.row, piece.col))
-    return set(location)
+    return location.pop() if len(location) == 1 else set(location)
 
 
 def check_check(game, turn_white):
     opp_moves = get_all_moves(game, for_white=(not turn_white))
     king_pos = get_location(game, turn_white=turn_white, find_king=True)
 
-    return list(king_pos).pop() in opp_moves
+    return king_pos in opp_moves
+
+
+def move_allows_check(game, piece, turn_white=None):
+    """ Checks whether moving selected piece will result in
+        own king being checked.
+    """
+
+    pass
