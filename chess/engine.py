@@ -15,16 +15,24 @@ class Move:
     def execute(self):
         self.game[self.pos_1] = Null()
         self.game[self.pos_2] = self.from_piece
+        self._config_en_passant()
 
         self.game.moves.append(self._get_rank_file())
         self.game.white_to_move = not self.game.white_to_move
-
-        self.from_piece.first_move = False
 
     def _get_rank_file(self):
         """ Convert array row/col to chess grid notation """
         return str(self.game.files[self.pos_2[1]]
                    + str(self.game.ranks[self.pos_2[0]]))  # noqa
+
+    def _config_en_passant(self):
+        if not isinstance(self.from_piece, Pawn):
+            return
+        if self.from_piece.first_move and abs(self.pos_1[0] - self.pos_2[0]) == 2:
+            self.from_piece.enpassantable = True
+        else:
+            self.from_piece.enpassantable = False
+        self.from_piece.first_move = False
 
 
 def get_all_moves(game, for_white):

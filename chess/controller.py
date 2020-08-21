@@ -14,7 +14,6 @@ class Select:
     def make_selection(self, select, game):
         if select in engine.get_location(game):
             self.pos_1 = select
-            # self.moves = game[select].get_moves(game)
             self.moves = engine.get_valid_moves(game, game[select])
             return self.moves
 

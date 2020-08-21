@@ -4,36 +4,6 @@ from chess.board import Board
 import pytest
 
 
-@pytest.fixture
-def game_white():
-    arr = [
-        ["br", "bn", "bb", "bq", "bk", "bb", "wp", "br"],
-        ["--", "--", "--", "bp", "--", "bp", "--", "--"],
-        ["--", "--", "bp", "--", "bp", "--", "--", "--"],
-        ["bp", "bp", "--", "--", "--", "--", "--", "bp"],
-        ["wp", "wp", "--", "--", "--", "--", "--", "wp"],
-        ["--", "--", "wp", "--", "wp", "--", "--", "--"],
-        ["--", "wp", "--", "wp", "--", "wp", "--", "--"],
-        ["wr", "wn", "wb", "wq", "wk", "wb", "bp", "wr"]
-    ]
-    return Board(array=arr)
-
-
-@pytest.fixture
-def game_black():
-    arr = [
-        ["br", "bn", "bb", "bq", "bk", "bb", "wp", "br"],
-        ["--", "--", "--", "bp", "--", "bp", "--", "--"],
-        ["--", "--", "bp", "--", "bp", "--", "--", "--"],
-        ["bp", "bp", "--", "--", "--", "--", "--", "bp"],
-        ["wp", "wp", "--", "--", "--", "--", "--", "wp"],
-        ["--", "--", "wp", "--", "wp", "--", "--", "--"],
-        ["--", "wp", "--", "wp", "--", "wp", "--", "--"],
-        ["wr", "wn", "wb", "wq", "wk", "wb", "bp", "wr"]
-    ]
-    return Board(array=arr, white_to_move=False)
-
-
 def test_pawn_move_init(game_white):
     move = Move((1, 5), (3, 5), game_white)
 
@@ -84,11 +54,10 @@ def test_rook_move_execute(game_black):
     assert game_black.moves == ['a6']
 
 
-def test_multiple_moves():
-    game = Board()
+def test_multiple_moves(start_board):
 
-    Move((6, 3), (4, 3), game).execute()
-    Move((1, 4), (3, 4), game).execute()
+    Move((6, 3), (4, 3), start_board).execute()
+    Move((1, 4), (3, 4), start_board).execute()
 
     new_board_1 = [["br", "bn", "bb", "bq", "bk", "bb", "bn", "br"],
                    ["bp", "bp", "bp", "bp", "--", "bp", "bp", "bp"],
@@ -99,11 +68,11 @@ def test_multiple_moves():
                    ["wp", "wp", "wp", "--", "wp", "wp", "wp", "wp"],
                    ["wr", "wn", "wb", "wq", "wk", "wb", "wn", "wr"]]
 
-    assert game.to_array() == new_board_1
-    assert game.white_to_move is True
-    assert game.moves == ['d4', 'e5']
+    assert start_board.to_array() == new_board_1
+    assert start_board.white_to_move is True
+    assert start_board.moves == ['d4', 'e5']
 
-    Move((4, 3), (3, 4), game).execute()
+    Move((4, 3), (3, 4), start_board).execute()
 
     new_board_2 = [["br", "bn", "bb", "bq", "bk", "bb", "bn", "br"],
                    ["bp", "bp", "bp", "bp", "--", "bp", "bp", "bp"],
@@ -114,6 +83,52 @@ def test_multiple_moves():
                    ["wp", "wp", "wp", "--", "wp", "wp", "wp", "wp"],
                    ["wr", "wn", "wb", "wq", "wk", "wb", "wn", "wr"]]
 
-    assert game.to_array() == new_board_2
-    assert game.white_to_move is False
-    assert game.moves == ['d4', 'e5', 'e5']
+    assert start_board.to_array() == new_board_2
+    assert start_board.white_to_move is False
+    assert start_board.moves == ['d4', 'e5', 'e5']
+
+
+# --- En Passant Config Test ---#
+@pytest.mark.parametrize(
+    "pos_2, enpass", [
+        ((5, 0), False),  # single step move, not en passantable
+        ((4, 0), True)    # double step move, en passantable
+    ]
+)
+def test_enpassant_config(start_board, pos_2, enpass):
+    pawn = start_board[(6, 0)]
+    Move((6, 0), pos_2, start_board).execute()
+
+    assert pawn.first_move is False
+    assert pawn.enpassantable is enpass
+
+
+# --- FIXTURES --- # noqa
+@pytest.fixture
+def game_white():
+    arr = [
+        ["br", "bn", "bb", "bq", "bk", "bb", "wp", "br"],
+        ["--", "--", "--", "bp", "--", "bp", "--", "--"],
+        ["--", "--", "bp", "--", "bp", "--", "--", "--"],
+        ["bp", "bp", "--", "--", "--", "--", "--", "bp"],
+        ["wp", "wp", "--", "--", "--", "--", "--", "wp"],
+        ["--", "--", "wp", "--", "wp", "--", "--", "--"],
+        ["--", "wp", "--", "wp", "--", "wp", "--", "--"],
+        ["wr", "wn", "wb", "wq", "wk", "wb", "bp", "wr"]
+    ]
+    return Board(array=arr)
+
+
+@pytest.fixture
+def game_black():
+    arr = [
+        ["br", "bn", "bb", "bq", "bk", "bb", "wp", "br"],
+        ["--", "--", "--", "bp", "--", "bp", "--", "--"],
+        ["--", "--", "bp", "--", "bp", "--", "--", "--"],
+        ["bp", "bp", "--", "--", "--", "--", "--", "bp"],
+        ["wp", "wp", "--", "--", "--", "--", "--", "wp"],
+        ["--", "--", "wp", "--", "wp", "--", "--", "--"],
+        ["--", "wp", "--", "wp", "--", "wp", "--", "--"],
+        ["wr", "wn", "wb", "wq", "wk", "wb", "bp", "wr"]
+    ]
+    return Board(array=arr, white_to_move=False)
