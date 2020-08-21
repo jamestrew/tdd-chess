@@ -1,5 +1,6 @@
 from chess.engine import Move, get_location
 from chess.board import Board
+from chess.pieces import *
 
 import pytest
 
@@ -43,6 +44,7 @@ def test_after_move():
                        (7, 4), (7, 5), (7, 6), (7, 7)])
 
 
+#  --- Find Pieces ---  # noqa
 @pytest.mark.parametrize(
     "white, coord", [
         (True, (7, 4)),
@@ -50,5 +52,33 @@ def test_after_move():
     ]
 )
 def test_find_king(start_board, white, coord):
-    loc = get_location(start_board, turn_white=white, find_king=True)
+    loc = get_location(start_board, turn_white=white, find_piece=King)
     assert loc == coord
+
+
+@pytest.mark.parametrize(
+    "white, piece, coord", [
+        (True, Rook, set([(7, 0), (7, 7)])),  # white rooks, both alive
+        (False, Night, (0, 6)),               # black night, one alive
+        (True, King, (7, 4)),                 # white king
+        (False, King, (0, 4)),                # black king
+        (False, Bishop, [])                 # black bishop, none alive
+    ]
+)
+def test_find_others(game, white, piece, coord):
+    loc = get_location(game, turn_white=white, find_piece=piece)
+
+    assert loc == coord
+
+
+@ pytest.fixture
+def game():
+    board = [["br", "--", "--", "bq", "bk", "--", "bn", "br"],
+             ["bp", "bp", "bp", "bp", "--", "bp", "bp", "bp"],
+             ["--", "--", "--", "--", "--", "--", "--", "--"],
+             ["--", "--", "--", "--", "wp", "--", "--", "--"],
+             ["--", "--", "--", "--", "--", "--", "--", "--"],
+             ["--", "--", "--", "--", "--", "--", "--", "--"],
+             ["wp", "wp", "wp", "--", "wp", "wp", "wp", "wp"],
+             ["wr", "wn", "wb", "wq", "wk", "wb", "wn", "wr"]]
+    return Board(array=board)

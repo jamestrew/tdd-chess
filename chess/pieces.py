@@ -77,11 +77,6 @@ class Pawn(Piece):
         self.enpassantable = False
 
     def get_moves(self, game):
-        """
-            To-do:
-                - enable en Passant
-                - enable promotion
-        """
         row = self.row
         col = self.col
         moves = []
@@ -101,6 +96,7 @@ class Pawn(Piece):
             # basic capture
             if self._check_capture(row + fwd, col + side, game):
                 moves.append((row + fwd, col + side))
+            # en passant
             if self._check_capture(row, new_c, game) and \
                     isinstance(game[(row, new_c)], Pawn) and \
                     game[(row, new_c)].enpassantable:
@@ -110,6 +106,10 @@ class Pawn(Piece):
 
 
 class Rook(Piece):
+
+    def __init__(self, row, col, is_white, first_move=True):
+        super().__init__(row, col, is_white)
+        self.first_move = first_move
 
     def get_moves(self, game):
         """
@@ -149,10 +149,13 @@ class Night(Piece):
 
 class King(Piece):
 
+    def __init__(self, row, col, is_white, first_move=True):
+        super().__init__(row, col, is_white)
+        self.first_move = first_move
+
     def get_moves(self, game):
         """
         To-do:
-            - eliminate suicidal tendencies
             - incorporate castling
         """
         self.moves = []

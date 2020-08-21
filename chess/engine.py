@@ -2,7 +2,12 @@
 from chess.pieces import *
 from chess.constants import *
 
+
 class Move:
+    """
+        To-do:
+            - enable promotion
+    """
 
     def __init__(self, pos_1, pos_2, game):
         self.pos_1 = pos_1
@@ -39,11 +44,9 @@ def get_all_moves(game, for_white):
     """ Get a list of all possible moves.
     Facilitates controller.Select
     """
-
     all_moves = []
-    for i in range(DIM):
-        for j in range(DIM):
-            piece = game[(i, j)]
+    for row in game.board:
+        for piece in row:
             if isinstance(piece, Null) or piece.is_white != for_white:
                 continue
             if (move := piece.get_moves(game)):
@@ -51,29 +54,34 @@ def get_all_moves(game, for_white):
     return set(all_moves)
 
 
-def get_location(game, turn_white=None, find_king=False):
+def get_location(game, turn_white=None, find_piece=None):
     """ Get a list of location of all pieces either color.
         By default, returns the color of the current turn.
     """
     turn_white = game.white_to_move if turn_white is None else turn_white
 
     location = []
-    for i in range(DIM):
-        for j in range(DIM):
-            piece = game[(i, j)]
+    for row in game.board:
+        for piece in row:
             if isinstance(piece, Null) or piece.is_white != turn_white:
                 continue
-            if find_king:
-                if not isinstance(piece, King):
+            if find_piece is not None:
+                if not isinstance(piece, find_piece):
                     continue
             location.append((piece.row, piece.col))
-    return location.pop() if len(location) == 1 else set(location)
+
+    if not location:
+        return location
+    elif len(location) == 1:
+        return location.pop()
+    else:
+        return set(location)
 
 
 def king_checked(game, turn_white):
     """ returns True if king is in check """
     opp_moves = get_all_moves(game, for_white=(not turn_white))
-    king_pos = get_location(game, turn_white=turn_white, find_king=True)
+    king_pos = get_location(game, turn_white=turn_white, find_piece=King)
 
     return king_pos in opp_moves
 
@@ -121,3 +129,7 @@ def get_valid_moves(game, piece):
     game[piece_loc] = piece
 
     return valid_moves
+
+
+def check_castling(game, turn_white):
+    king = game[get_location(game, turn_white=turn_white, find_king=True)]

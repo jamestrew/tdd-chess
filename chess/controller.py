@@ -1,6 +1,4 @@
 """ Controller module (adapter for UIs) """
-from chess.constants import *
-from chess.pieces import Null
 from chess import engine
 
 
