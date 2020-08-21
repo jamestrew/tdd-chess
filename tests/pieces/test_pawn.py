@@ -13,6 +13,7 @@ def test_pawn_init():
     assert pawn.first_move is True
     assert pawn.unit == 'p'
     assert pawn.name == 'bp'
+    assert pawn.enpassantable is False
 
     rep = pawn.__repr__()
     assert rep == "Pawn(1, 0, is_white=False)"
@@ -57,3 +58,34 @@ def test_pawn_get_moves(board, coord, piece_name, moves):
     pawn = board[coord]
     assert pawn.name == piece_name
     assert pawn.get_moves(board) == moves
+
+
+@pytest.mark.parametrize(
+    "move_from, capt_coord, move_to, enpass", [
+        ((3, 1), (3, 0), (2, 0), True),  # enpassantable, white on black
+        ((4, 6), (4, 7), (5, 7), False)  # not enpassantable, black on white
+    ]
+)
+def test_enpassant(enpassant_board, move_from, capt_coord, move_to, enpass):
+    move_pawn = enpassant_board[move_from]
+    capt_pawn = enpassant_board[capt_coord]
+    capt_pawn.enpassantable = enpass
+
+    result = move_to in move_pawn.get_moves(enpassant_board)
+
+    assert result is enpass
+
+
+@pytest.fixture
+def enpassant_board():
+    arr = [
+        ["br", "bn", "bb", "bq", "bk", "bb", "wp", "br"],
+        ["--", "--", "--", "bp", "--", "bp", "--", "--"],
+        ["--", "--", "bp", "--", "bp", "--", "--", "--"],
+        ["bp", "wp", "--", "--", "--", "--", "--", "bp"],
+        ["wp", "--", "--", "--", "--", "--", "bp", "wp"],
+        ["--", "--", "wp", "--", "wp", "--", "--", "--"],
+        ["--", "--", "--", "wp", "--", "wp", "--", "--"],
+        ["wr", "wn", "wb", "wq", "wk", "wb", "bp", "wr"]
+    ]
+    return Board(array=arr)

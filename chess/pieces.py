@@ -74,6 +74,7 @@ class Pawn(Piece):
     def __init__(self, row, col, is_white, first_move=True):
         super().__init__(row, col, is_white)
         self.first_move = first_move
+        self.enpassantable = False
 
     def get_moves(self, game):
         """
@@ -86,20 +87,25 @@ class Pawn(Piece):
         moves = []
         fwd = -1 if self.is_white is True else 1
 
-        # basic move
+        # move
         if isinstance(game[(row + fwd, col)], Null):
             moves.append((row + fwd, col))
             if self.first_move and isinstance(game[(row + 2 * fwd, col)], Null):
                 moves.append((row + 2 * fwd, col))
 
-        # basic capture
+        # capture
         for side in [-1, 1]:
-            if col + side in (-1, DIM):
+            new_c = col + side
+            if new_c < 0 or new_c >= DIM:  # off the board
                 continue
-
+            # basic capture
             if self._check_capture(row + fwd, col + side, game):
                 moves.append((row + fwd, col + side))
-
+            if self._check_capture(row, new_c, game) and \
+                    isinstance(game[(row, new_c)], Pawn) and \
+                    game[(row, new_c)].enpassantable:
+                moves.append((row + fwd, new_c))
+        # breakpoint()
         return moves
 
 
