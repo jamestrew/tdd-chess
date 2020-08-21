@@ -11,7 +11,7 @@ import pytest
     ]
 )
 def test_no_checks(start_board, white, result):
-    assert check_check(start_board, turn_white=white) is result
+    assert king_checked(start_board, turn_white=white) is result
 
 
 @pytest.fixture
@@ -36,4 +36,4 @@ def check_board():
     ]
 )
 def test_checks(check_board, white, result):
-    assert check_check(check_board, turn_white=white) is result
+    assert king_checked(check_board, turn_white=white) is result

@@ -62,7 +62,8 @@ def get_location(game, turn_white=None, find_king=False):
     return location.pop() if len(location) == 1 else set(location)
 
 
-def check_check(game, turn_white):
+def king_checked(game, turn_white):
+    """ returns True if king is in check """
     opp_moves = get_all_moves(game, for_white=(not turn_white))
     king_pos = get_location(game, turn_white=turn_white, find_king=True)
 
