@@ -1,34 +1,11 @@
-from chess.pieces import King
 from chess.board import Board
 
 import pytest
 
 
 @pytest.fixture
-def basic_board():
-    return [
-        ["br", "bn", "bb", "bq", "bk", "bb", "bn", "br"],
-        ["bp", "bp", "bp", "bp", "bp", "bp", "bp", "bp"],
-        ["--", "--", "--", "--", "--", "--", "--", "--"],
-        ["--", "--", "--", "--", "--", "--", "--", "--"],
-        ["--", "--", "--", "--", "--", "--", "--", "--"],
-        ["--", "--", "--", "--", "--", "--", "--", "--"],
-        ["wp", "wp", "wp", "wp", "wp", "wp", "wp", "wp"],
-        ["wr", "wn", "wb", "wq", "wk", "wb", "wn", "wr"]
-    ]
-
-
-def test_king_move_stuck_white(basic_board):
-    board = Board(player_white=True, white_to_move=True, array=basic_board)
-    king = board[(7, 4)]
-
-    assert king.name == 'wk'
-    assert set(king.get_moves(board)) == set([])
-
-
-@pytest.fixture
-def wide_board():
-    return [
+def board():
+    arr = [
         ["br", "bn", "bb", "bq", "bk", "bb", "bn", "br"],
         ["bp", "bp", "bp", "bp", "bp", "bp", "bp", "bp"],
         ["--", "--", "--", "--", "wk", "--", "--", "--"],
@@ -38,12 +15,18 @@ def wide_board():
         ["wp", "wp", "wp", "wp", "--", "wp", "wp", "wp"],
         ["wr", "wn", "wb", "wq", "--", "wb", "wn", "wr"]
     ]
+    return Board(array=arr)
 
 
-def test_king_move_wide_white(wide_board):
-    board = Board(player_white=True, white_to_move=True, array=wide_board)
-    king = board[(2, 4)]
+@pytest.mark.parametrize(
+    "coord, piece, moves", [
+        ((0, 4), 'bk', []),  # black blocked
+        # white wide
+        ((2, 4), 'wk', [(2, 3), (1, 3), (1, 4), (1, 5), (2, 5), (3, 5), (3, 3)])
+    ]
+)
+def test_king_moves(board, coord, piece, moves):
+    king = board[coord]
 
-    assert king.name == 'wk'
-    assert set(king.get_moves(board)) == set([(2, 3), (1, 3), (1, 4), (1, 5),
-                                              (2, 5), (3, 5), (3, 3)])
+    assert king.name == piece
+    assert set(king.get_moves(board)) == set(moves)

@@ -40,19 +40,20 @@ def board():
 
 
 @pytest.mark.parametrize(
-    "coord, moves", [
-        ((6, 3), [(5, 3), (4, 3)]),  # white first move
-        ((1, 3), [(2, 3), (3, 3)]),  # black first move
-        ((5, 4), [(4, 4)]),          # white second move
-        ((2, 4), [(3, 4)]),          # black second move
-        ((4, 7), []),                # white blocked
-        ((3, 7), []),                # black blocked
-        ((4, 1), [(3, 0)]),          # white capture
-        ((3, 1), [(4, 0)]),          # black capture
-        ((4, 0), [(3, 1)]),          # white capture on board edge
-        ((3, 0), [(4, 1)])           # black capture on board edge
+    "coord, piece_name, moves", [
+        ((6, 3), 'wp', [(5, 3), (4, 3)]),  # white first move
+        ((1, 3), 'bp', [(2, 3), (3, 3)]),  # black first move
+        ((5, 4), 'wp', [(4, 4)]),          # white second move
+        ((2, 4), 'bp', [(3, 4)]),          # black second move
+        ((4, 7), 'wp', []),                # white blocked
+        ((3, 7), 'bp', []),                # black blocked
+        ((4, 1), 'wp', [(3, 0)]),          # white capture
+        ((3, 1), 'bp', [(4, 0)]),          # black capture
+        ((4, 0), 'wp', [(3, 1)]),          # white capture on board edge
+        ((3, 0), 'bp', [(4, 1)])           # black capture on board edge
     ]
 )
-def test_pawn_get_moves_first_white(board, coord, moves):
+def test_pawn_get_moves(board, coord, piece_name, moves):
     pawn = board[coord]
+    assert pawn.name == piece_name
     assert pawn.get_moves(board) == moves
