@@ -7,6 +7,7 @@ class Move:
     """
         To-do:
             - enable promotion
+            - move rook during castling
     """
 
     def __init__(self, pos_1, pos_2, game):
@@ -136,6 +137,14 @@ def get_valid_moves(game, piece):
 
 def get_castling(game, turn_white):
     """ Returns valid castling moves if possible. """
+
+    """
+        To-do:
+            - check king is not currently in check
+            - check king doesn't pass through sqr currently attacked
+            - check king doesn't end up in check
+
+    """
     moves = {King: [], Rook: []}
     king = game[get_location(game, turn_white=turn_white, find_piece=King)]
     rook_locs = get_location(game, turn_white=turn_white, find_piece=Rook)
