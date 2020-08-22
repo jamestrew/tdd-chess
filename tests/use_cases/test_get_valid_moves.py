@@ -34,10 +34,18 @@ def test_danger_non_king_move(test_game, test_arr):
 
 def test_danger_king(test_king_game, test_king_arr):
     king = test_king_game[(2, 4)]
+    king.first_move = False
     valid_moves = get_valid_moves(test_king_game, king)
 
     assert king.name == 'wk'
     assert set(valid_moves) == set([(3, 3), (3, 5)])
+
+
+def test_valid_moves_with_castling(white_castle):
+    king = white_castle[(7, 4)]
+    moves = get_valid_moves(white_castle, king)
+    result = [(7, 3), (7, 5), (7, 2), (7, 6)]
+    assert set(moves) == set(result)
 
 
 @pytest.fixture
@@ -74,3 +82,16 @@ def test_king_arr():
 @pytest.fixture
 def test_king_game(test_king_arr):
     return Board(array=test_king_arr)
+
+
+@pytest.fixture
+def white_castle():
+    arr = [["br", "--", "--", "--", "bk", "--", "--", "br"],
+           ["bp", "bp", "bp", "bp", "bp", "bp", "bp", "bp"],
+           ["--", "--", "--", "--", "--", "--", "--", "--"],
+           ["--", "--", "--", "--", "--", "--", "--", "--"],
+           ["--", "--", "--", "--", "--", "--", "--", "--"],
+           ["--", "--", "--", "--", "--", "--", "--", "--"],
+           ["wp", "wp", "wp", "wp", "wp", "wp", "wp", "wp"],
+           ["wr", "--", "--", "--", "wk", "--", "--", "wr"]]
+    return Board(array=arr)

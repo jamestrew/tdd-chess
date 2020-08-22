@@ -36,6 +36,14 @@ def test_first_selection_capture(game):
     assert set(select.moves) == set([(3, 3), (3, 4)])
 
 
+def test_first_selection_castle_king(white_castle):
+    select = Select()
+    select.make_selection((7, 4), white_castle)
+
+    assert select.pos_1 == (7, 4)
+    assert set(select.moves) == set([(7, 3), (7, 5), (7, 2), (7, 6)])
+
+
 # --- Second Selection --- # noqa
 @pytest.mark.parametrize(
     "sel1, sel2, pos1, result", [
@@ -78,6 +86,18 @@ def test_second_selection_capture(mock_Move, game):
     mock_Move.assert_called_with((4, 3), (3, 4), game)
 
 
+@patch("chess.engine.Move")
+def test_second_selection_castle_king(mock_Move, white_castle):
+    select = Select()
+
+    select.make_selection((7, 4), white_castle)
+    select.make_selection((7, 6), white_castle)
+
+    assert select.pos_1 is None
+    assert select.moves == []
+    mock_Move.assert_called_with((7, 4), (7, 6), white_castle)
+
+
 @pytest.fixture
 def game():
     arr = [
@@ -90,4 +110,17 @@ def game():
         ["wp", "wp", "wp", "--", "wp", "wp", "wp", "wp"],
         ["wr", "wn", "wb", "wq", "wk", "wb", "wn", "wr"]
     ]
+    return Board(array=arr)
+
+
+@pytest.fixture
+def white_castle():
+    arr = [["br", "--", "--", "--", "bk", "--", "--", "br"],
+           ["bp", "bp", "bp", "bp", "bp", "bp", "bp", "bp"],
+           ["--", "--", "--", "--", "--", "--", "--", "--"],
+           ["--", "--", "--", "--", "--", "--", "--", "--"],
+           ["--", "--", "--", "--", "--", "--", "--", "--"],
+           ["--", "--", "--", "--", "--", "--", "--", "--"],
+           ["wp", "wp", "wp", "wp", "wp", "wp", "wp", "wp"],
+           ["wr", "--", "--", "--", "wk", "--", "--", "wr"]]
     return Board(array=arr)

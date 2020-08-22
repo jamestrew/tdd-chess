@@ -19,6 +19,7 @@ class Move:
         self.dest_piece = game[pos_2]
 
     def execute(self):
+        self._castle()
         self.game[self.pos_1] = Null()
         self.game[self.pos_2] = self.from_piece
         self._config_en_passant()
@@ -38,6 +39,29 @@ class Move:
             self.from_piece.enpassantable = True
         else:
             self.from_piece.enpassantable = False
+        self.from_piece.first_move = False
+
+    def _castle(self):
+        if not isinstance(self.from_piece, King):
+            return
+
+        move = get_castling(self.game, self.from_piece)
+        # breakpoint()
+        if self.pos_2 not in move.get(King):
+            return
+
+        index = move.get(King).index(self.pos_2)
+        rook_dest = move.get(Rook)[index]
+        rook_col = 0 if index else 7
+        rook_row = self.pos_2[0]
+
+        # move rook
+        rook = self.game[(rook_row, rook_col)]
+        self.game[(rook_row, rook_col)] = Null()
+        self.game[rook_dest] = rook
+
+        # config pieces
+        rook.first_move = False
         self.from_piece.first_move = False
 
 
@@ -129,13 +153,12 @@ def get_valid_moves(game, piece):
         game[move] = capt_piece
     game[piece_loc] = piece
 
-    if isinstance(piece, King):
-        valid_moves.extend(get_castling(game, piece.is_white).get(King))
-
+    if isinstance(piece, King) and piece.first_move:
+        valid_moves.extend(get_castling(game, piece).get(King))
     return valid_moves
 
 
-def get_castling(game, turn_white):
+def get_castling(game, king):
     """ Returns valid castling moves if possible. """
 
     """
@@ -145,40 +168,36 @@ def get_castling(game, turn_white):
             - check king doesn't end up in check
 
     """
-    moves = {King: [], Rook: []}
-    king = game[get_location(game, turn_white=turn_white, find_piece=King)]
-    rook_locs = get_location(game, turn_white=turn_white, find_piece=Rook)
+    moves = {King: [(), ()], Rook: [(), ()]}
+    white = king.is_white
+    rook_locs = get_location(game, turn_white=white, find_piece=Rook)
     rooks = [game[loc] for loc in rook_locs if game[loc].first_move]
 
-    if not king.first_move or not rooks:
+    if not rooks:
         return moves
 
     row = rooks[0].row
-
     for rook in rooks:
-        if (queen_side := rook.col < king.col):
-            start, end = rook.col + 1, king.col
+        if game.player_white:
+            king_side = rook.col > king.col
+            mult = 1
         else:
+            king_side = king.col > rook.col
+            mult = -1
+
+        if king_side:
             start, end = king.col + 1, rook.col
+        else:
+            start, end = rook.col + 1, king.col
 
         for col in range(start, end):
             if not isinstance(game[(row, col)], Null):
                 break
         else:
-            if game.player_white:
-                if queen_side:
-                    moves[King].append((row, king.col - 2))
-                    moves[Rook].append((row, rook.col + 3))
-                else:
-                    moves[King].append((row, king.col + 2))
-                    moves[Rook].append((row, rook.col - 2))
+            if king_side:
+                moves[King][0] = (row, king.col + mult * 2)
+                moves[Rook][0] = (row, rook.col - mult * 2)
             else:
-                if queen_side:  # king side now
-                    moves[King].append((row, king.col - 2))
-                    moves[Rook].append((row, rook.col + 2))
-                else:
-                    moves[King].append((row, king.col + 2))
-                    moves[Rook].append((row, rook.col - 3))
-
-    # breakpoint()
+                moves[King][1] = (row, king.col - mult * 2)
+                moves[Rook][1] = (row, rook.col + mult * 3)
     return moves
