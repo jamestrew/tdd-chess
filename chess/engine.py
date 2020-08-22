@@ -129,14 +129,14 @@ def get_valid_moves(game, piece):
     game[piece_loc] = piece
 
     if isinstance(piece, King):
-        valid_moves.append(get_castling(game, piece.is_white))
+        valid_moves.extend(get_castling(game, piece.is_white).get(King))
 
     return valid_moves
 
 
 def get_castling(game, turn_white):
     """ Returns valid castling moves if possible. """
-    moves = []
+    moves = {King: [], Rook: []}
     king = game[get_location(game, turn_white=turn_white, find_piece=King)]
     rook_locs = get_location(game, turn_white=turn_white, find_piece=Rook)
     rooks = [game[loc] for loc in rook_locs if game[loc].first_move]
@@ -147,15 +147,29 @@ def get_castling(game, turn_white):
     row = rooks[0].row
 
     for rook in rooks:
-        delta = abs(rook.col - king.col)
-        if game.player_white:
-            start, end = (5, 7) if delta == 3 else (1, 4)
-            mod = 1
+        if (queen_side := rook.col < king.col):
+            start, end = rook.col + 1, king.col
         else:
-            start, end, mod = (1, 3, 0) if delta == 3 else (4, 7, 1)
+            start, end = king.col + 1, rook.col
 
-        cells = [game[(row, col)] for col in range(start, end)]
-        if not [piece for piece in cells if not isinstance(piece, Null)]:
-            moves.append((row, start + mod))
+        for col in range(start, end):
+            if not isinstance(game[(row, col)], Null):
+                break
+        else:
+            if game.player_white:
+                if queen_side:
+                    moves[King].append((row, king.col - 2))
+                    moves[Rook].append((row, rook.col + 3))
+                else:
+                    moves[King].append((row, king.col + 2))
+                    moves[Rook].append((row, rook.col - 2))
+            else:
+                if queen_side:  # king side now
+                    moves[King].append((row, king.col - 2))
+                    moves[Rook].append((row, rook.col + 2))
+                else:
+                    moves[King].append((row, king.col + 2))
+                    moves[Rook].append((row, rook.col - 3))
+
     # breakpoint()
     return moves
