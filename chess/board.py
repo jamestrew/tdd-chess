@@ -82,6 +82,8 @@ class Board:
                     self.board[i][j] = unit(i, j, is_white)
 
     def to_array(self):
+        if not self.player_white:
+            self.board = np.rot90(self.board, 2)
         array = []
         for i in range(DIM):
             row = []
@@ -99,22 +101,15 @@ class Board:
         piece.col = coord[1]
 
     def __str__(self):
-        array = ""
-        for i in range(DIM + 1):
-            row = ""
-            if i < DIM:
-                for j in range(DIM + 1):
-                    if j < DIM:
-                        row += self.board[i][j].name + " "
-                    else:
-                        if self.player_white:
-                            row += str(DIM - i) + "\n"
-                        else:
-                            row += str(i + 1) + "\n"
-                array += row
+        array = self.to_array()
+        for i, row in enumerate(array):
+            if self.player_white:
+                row.append(DIM - i)
             else:
-                if self.player_white:
-                    array += "-a -b -c -d -e -f -g -h"
-                else:
-                    array += "-h -g -f -e -d -c -b -a"
-        return array
+                row.append(i + 1)
+        if self.player_white:
+            array.append(['-a', '-b', '-c', '-d', '-e', '-f', '-g', '-h'])
+        else:
+            array.append(['-h', '-g', '-f', '-e', '-d', '-c', '-b', '-a'])
+
+        return '\n'.join([' '.join([str(cell) for cell in row]) for row in array])
