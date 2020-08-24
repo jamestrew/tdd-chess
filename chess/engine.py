@@ -35,6 +35,8 @@ class Move:
 
     def _enpassant(self):
         """ Helper function to execute en passant capture """
+        if not isinstance(self.from_piece, Pawn):
+            return
         piece_loc = (self.pos_1[0], self.pos_2[1])
         piece = self.game[piece_loc]
         ep_true = piece.enpassantable if isinstance(piece, Pawn) else False

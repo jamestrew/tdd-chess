@@ -82,13 +82,13 @@ class Board:
                     self.board[i][j] = unit(i, j, is_white)
 
     def to_array(self):
-        if not self.player_white:
-            self.board = np.rot90(self.board, 2)
+        board = np.rot90(self.board, 2) if not self.player_white else self.board
+
         array = []
         for i in range(DIM):
             row = []
             for j in range(DIM):
-                row.append(self.board[i][j].name)
+                row.append(board[i][j].name)
             array.append(row)
         return array
 

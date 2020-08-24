@@ -1,5 +1,6 @@
 """ Controller module (adapter for UIs) """
 from chess import engine
+from chess.constants import *
 
 
 class Select:
@@ -13,7 +14,12 @@ class Select:
         if select in engine.get_location(game):
             self.pos_1 = select
             self.moves = engine.get_valid_moves(game, game[select])
-            return self.moves
+
+            if game.player_white:
+                suggestions = self.moves
+            else:
+                suggestions = [converter(coord) for coord in self.moves]
+            return suggestions
 
         if self.pos_1 and select in self.moves:
             engine.Move(self.pos_1, select, game).execute()
@@ -24,3 +30,21 @@ class Select:
     def _reset(self):
         self.pos_1 = None
         self.moves = []
+
+
+def gui_coord(player, coord):
+    y, x = coord
+
+    if BORD < x < B_WIDTH + BORD and BORD < y < B_HEIGHT + BORD:
+        row, col = (x // SQ_SIZE, y // SQ_SIZE)
+        if player:
+            return row, col
+        else:
+            return converter((row, col))
+
+    return False
+
+
+def converter(coord):
+    conv = {0: 7, 1: 6, 2: 5, 3: 4, 4: 3, 5: 2, 6: 1, 7: 0}
+    return conv[coord[0]], conv[coord[1]]

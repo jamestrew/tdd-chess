@@ -3,7 +3,7 @@ import os
 from chess.constants import *
 
 from chess.board import Board
-from chess.controller import Select
+from chess.controller import Select, gui_coord
 
 pg.init()
 pg.font.init()
@@ -70,9 +70,10 @@ def draw_pieces(screen, board):
     Draw the moving of pieces.
     Likely requires the refreshing of draws
     """
+
     for row, x in enumerate(range(BORD, B_WIDTH, SQ_SIZE)):
         for col, y in enumerate(range(BORD, B_HEIGHT, SQ_SIZE)):
-            piece = board[row][col].name
+            piece = board[row][col]
             if piece != '--':
                 screen.blit(IMAGES[piece], pg.Rect(y, x, SQ_SIZE, SQ_SIZE))
 
@@ -99,7 +100,7 @@ def draw_last_move(screen, game):
 
 def draw_game(screen, game):
     draw_board(screen)
-    draw_pieces(screen, game.board)
+    draw_pieces(screen, game.to_array())
 
 
 def main():
@@ -110,7 +111,8 @@ def main():
     clock = pg.time.Clock()
     screen.fill(pg.Color(BACKGROUND))
 
-    game = Board(player_white=False)
+    player = True
+    game = Board(player_white=player)
     select = Select()
     load_images()
 
@@ -121,12 +123,8 @@ def main():
             if event.type == pg.QUIT:
                 running = False
             if event.type == pg.MOUSEBUTTONDOWN:
-                location = pg.mouse.get_pos()
-                if location[0] < BORD or location[0] > B_WIDTH + BORD \
-                        or location[1] < BORD or location[1] > B_HEIGHT + BORD:
-                    # checks that click locations is within bound of the board
+                if not (position := gui_coord(player, pg.mouse.get_pos())):
                     continue
-                position = (location[1] // SQ_SIZE, location[0] // SQ_SIZE)
                 suggestions = select.make_selection(position, game)
 
         try:

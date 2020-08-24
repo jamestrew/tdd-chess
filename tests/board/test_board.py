@@ -12,10 +12,12 @@ def test_board_init_play_white(start_board):
 
 def test_board_to_array_white(start_board, game_grid_white):
     assert start_board.to_array() == game_grid_white
+    assert start_board.to_array() == game_grid_white
 
 
 def test_board_to_array_black(game_grid_black):
     board = Board(player_white=False)
+    assert board.to_array() == game_grid_black
     assert board.to_array() == game_grid_black
 
 
