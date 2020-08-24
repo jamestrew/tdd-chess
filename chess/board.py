@@ -29,7 +29,6 @@ class Board:
 
     def __init__(self, player_white=True, white_to_move=True, array=None):
         self.player_white = player_white
-        self.opponent_white = not self.player_white
         self.white_to_move = white_to_move
         self.moves = []
 
@@ -41,41 +40,43 @@ class Board:
 
     def _init_board_start(self):
         """ Inits the board according to basic chess start config """
-        self.board[0][0] = Rook(0, 0, self.opponent_white)
-        self.board[0][1] = Night(0, 1, self.opponent_white)
-        self.board[0][2] = Bishop(0, 2, self.opponent_white)
-        self.board[0][5] = Bishop(0, 5, self.opponent_white)
-        self.board[0][6] = Night(0, 6, self.opponent_white)
-        self.board[0][7] = Rook(0, 7, self.opponent_white)
+        self.board[0][0] = Rook(0, 0, is_white=False)
+        self.board[0][1] = Night(0, 1, is_white=False)
+        self.board[0][2] = Bishop(0, 2, is_white=False)
+        self.board[0][3] = Queen(0, 3, is_white=False)
+        self.board[0][4] = King(0, 4, is_white=False)
+        self.board[0][5] = Bishop(0, 5, is_white=False)
+        self.board[0][6] = Night(0, 6, is_white=False)
+        self.board[0][7] = Rook(0, 7, is_white=False)
 
         for i in range(DIM):
-            self.board[1][i] = Pawn(1, i, self.opponent_white)
-            self.board[6][i] = Pawn(6, i, self.player_white)
+            self.board[1][i] = Pawn(1, i, is_white=False)
+            self.board[6][i] = Pawn(6, i, is_white=True)
 
-        self.board[7][0] = Rook(7, 0, self.player_white)
-        self.board[7][1] = Night(7, 1, self.player_white)
-        self.board[7][2] = Bishop(7, 2, self.player_white)
-        self.board[7][5] = Bishop(7, 5, self.player_white)
-        self.board[7][6] = Night(7, 6, self.player_white)
-        self.board[7][7] = Rook(7, 7, self.player_white)
-
-        # flip the King/Queen depending on the player_white
-        q_col, k_col = (3, 4) if self.player_white else (4, 3)
-
-        self.board[0][q_col] = Queen(0, q_col, self.opponent_white)
-        self.board[0][k_col] = King(0, k_col, self.opponent_white)
-        self.board[7][q_col] = Queen(7, q_col, self.player_white)
-        self.board[7][k_col] = King(7, k_col, self.player_white)
+        self.board[7][0] = Rook(7, 0, is_white=True)
+        self.board[7][1] = Night(7, 1, is_white=True)
+        self.board[7][2] = Bishop(7, 2, is_white=True)
+        self.board[7][3] = Queen(7, 3, is_white=True)
+        self.board[7][4] = King(7, 4, is_white=True)
+        self.board[7][5] = Bishop(7, 5, is_white=True)
+        self.board[7][6] = Night(7, 6, is_white=True)
+        self.board[7][7] = Rook(7, 7, is_white=True)
 
     def _init_from_array(self, array):
-        for j in range(DIM):
-            for i in range(DIM):
-                if array[i][j] == '--':
+        for i, row in enumerate(array):
+            for j, piece in enumerate(row):
+                if piece == '--':
                     continue
-                is_white = True if array[i][j].startswith('w') else False
-                unit = self.unit_dict[array[i][j][-1]]
-                if unit == Pawn and i not in (1, 6):
-                    # pawn has committed their first move
+                is_white = True if piece.startswith('w') else False
+                unit = self.unit_dict[piece[-1]]
+
+                # check pawn, king, rook has moved
+                if (unit == Pawn and i not in (1, 6)) or \
+                    (piece == 'wk' and (i, j) != (7, 4)) or \
+                    (piece == 'bk' and (i, j) != (0, 4)) or \
+                    (piece == 'wr' and (i, j) not in ((7, 0), (7, 7))) or \
+                        (piece == 'br' and (i, j) not in ((0, 0), (0, 7))):
+
                     self.board[i][j] = unit(i, j, is_white, first_move=False)
                 else:
                     self.board[i][j] = unit(i, j, is_white)
