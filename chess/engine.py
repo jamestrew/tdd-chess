@@ -175,19 +175,12 @@ def get_valid_moves(game, piece):
 def get_castling(game, king):
     """ Returns valid castling moves if possible. """
 
-    """
-        To-do:
-            - check king is not currently in check
-            - check king doesn't pass through sqr currently attacked
-            - check king doesn't end up in check
-
-    """
     moves = {King: [(), ()], Rook: [(), ()]}
     white = king.is_white
     rook_locs = get_location(game, turn_white=white, find_piece=Rook)
     rooks = [game[loc] for loc in rook_locs if game[loc].first_move]
 
-    if not rooks:
+    if not rooks or king_checked(game, game.white_to_move):
         return moves
 
     row = rooks[0].row
@@ -203,6 +196,9 @@ def get_castling(game, king):
         for col in range(start, end):
             if not isinstance(game[(row, col)], Null):
                 break
+            if abs(col - king.col) < 3:
+                if (row, col) in get_all_moves(game, not white):
+                    break
         else:
             if king_side:
                 moves[King][0] = (row, king.col + mult * 2)
