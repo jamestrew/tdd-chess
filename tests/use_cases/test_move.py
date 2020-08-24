@@ -103,39 +103,62 @@ def test_enpassant_config(start_board, pos_2, enpass):
     assert pawn.enpassantable is enpass
 
 
-# def test_enpassant_capture(game_enpassant):
-#     Move((1, 0), (3, 0), game_enpassant).execute()
-#     Move((3, 1), (2, 0), game_enpassant).execute()
+def test_enpassant_capture(game_enpassant):
+    Move((1, 0), (3, 0), game_enpassant).execute()
+    Move((3, 1), (2, 0), game_enpassant).execute()
+    Move((6, 7), (4, 7), game_enpassant).execute()
+    Move((4, 6), (5, 7), game_enpassant).execute()
 
-#     post_move = [
-#         ["br", "bn", "bb", "bq", "bk", "bb", "wp", "br"],
-#         ["--", "--", "--", "bp", "--", "bp", "--", "--"],
-#         ["wp", "--", "bp", "--", "bp", "--", "--", "--"],
-#         ["--", "--", "--", "--", "--", "--", "--", "bp"],
-#         ["wp", "--", "--", "--", "--", "--", "--", "wp"],
-#         ["--", "--", "wp", "--", "wp", "--", "--", "--"],
-#         ["--", "wp", "--", "wp", "--", "wp", "--", "--"],
-#         ["wr", "wn", "wb", "wq", "wk", "wb", "bp", "wr"]
-#     ]
+    post_move = [
+        ["br", "bn", "bb", "bq", "bk", "bb", "wp", "br"],
+        ["--", "--", "--", "bp", "--", "bp", "--", "--"],
+        ["wp", "--", "bp", "--", "bp", "--", "--", "--"],
+        ["--", "--", "--", "--", "--", "--", "--", "--"],
+        ["wp", "--", "--", "--", "--", "--", "--", "--"],
+        ["--", "--", "wp", "--", "wp", "--", "--", "bp"],
+        ["--", "wp", "--", "wp", "--", "wp", "--", "--"],
+        ["wr", "wn", "wb", "wq", "wk", "wb", "bp", "wr"]
+    ]
 
-#     assert game_enpassant.to_array() == post_move
+    assert game_enpassant.to_array() == post_move
 
 
 # --- Castling --- # noqa
 @pytest.mark.parametrize(
-    "pos_2, first, rdest", [
-        ((7, 2), False, (7, 3)),  # white-white, queen side castle
-        ((7, 6), False, (7, 5)),  # white-white, king side caslte
+    "kpos, pos_2, rdest, name", [
+        ((7, 4), (7, 2), (7, 3), ('wk', 'wr')),  # white-white, queen side castle
+        ((7, 4), (7, 6), (7, 5), ('wk', 'wr')),  # white-white, king side caslte
+        ((0, 4), (0, 2), (0, 3), ('bk', 'br')),  # white-black, queen side castle
+        ((0, 4), (0, 6), (0, 5), ('bk', 'br'))   # white-black, king side castle
     ]
 )
-def test_white_board_castle(white_castle, pos_2, first, rdest):
-    Move((7, 4), pos_2, white_castle).execute()
+def test_white_board_castle(white_castle, kpos, pos_2, rdest, name):
+    Move(kpos, pos_2, white_castle).execute()
 
     king = white_castle[pos_2]
     rook = white_castle[rdest]
-    assert king.name == 'wk'
+    assert king.name == name[0]
     assert king.first_move is False
-    assert rook.name == 'wr'
+    assert rook.name == name[1]
+    assert rook.first_move is False
+
+
+@pytest.mark.parametrize(
+    "kpos, pos_2, rdest, name", [
+        ((0, 3), (0, 5), (0, 4), ('wk', 'wr')),  # black-white, queen side castle
+        ((0, 3), (0, 1), (0, 1), ('wk', 'wr')),  # black-white, king side caslte
+        ((7, 3), (7, 5), (7, 4), ('bk', 'br')),  # black-black, queen side castle
+        ((7, 3), (7, 1), (7, 1), ('bk', 'br'))   # black-black, king side castle
+    ]
+)
+def test_black_board_castle(black_castle, kpos, pos_2, rdest, name):
+    Move(kpos, pos_2, black_castle).execute()
+
+    king = black_castle[pos_2]
+    rook = black_castle[rdest]
+    assert king.name == name[0]
+    assert king.first_move is False
+    assert rook.name == name[1]
     assert rook.first_move is False
 
 
@@ -176,10 +199,10 @@ def game_enpassant():
         ["br", "bn", "bb", "bq", "bk", "bb", "wp", "br"],
         ["bp", "--", "--", "bp", "--", "bp", "--", "--"],
         ["--", "--", "bp", "--", "bp", "--", "--", "--"],
-        ["--", "wp", "--", "--", "--", "--", "--", "bp"],
-        ["wp", "--", "--", "--", "--", "--", "--", "wp"],
+        ["--", "wp", "--", "--", "--", "--", "--", "--"],
+        ["wp", "--", "--", "--", "--", "--", "bp", "--"],
         ["--", "--", "wp", "--", "wp", "--", "--", "--"],
-        ["--", "wp", "--", "wp", "--", "wp", "--", "--"],
+        ["--", "wp", "--", "wp", "--", "wp", "--", "wp"],
         ["wr", "wn", "wb", "wq", "wk", "wb", "bp", "wr"]
     ]
     return Board(array=arr, white_to_move=False)
@@ -196,3 +219,16 @@ def white_castle():
            ["wp", "wp", "wp", "wp", "wp", "wp", "wp", "wp"],
            ["wr", "--", "--", "--", "wk", "--", "--", "wr"]]
     return Board(array=arr)
+
+
+@pytest.fixture
+def black_castle():
+    arr = [["wr", "--", "--", "wk", "--", "--", "--", "wr"],
+           ["qp", "qp", "qp", "qp", "qp", "qp", "qp", "qp"],
+           ["--", "--", "--", "--", "--", "--", "--", "--"],
+           ["--", "--", "--", "--", "--", "--", "--", "--"],
+           ["--", "--", "--", "--", "--", "--", "--", "--"],
+           ["--", "--", "--", "--", "--", "--", "--", "--"],
+           ["wp", "wp", "wp", "wp", "wp", "wp", "wp", "wp"],
+           ["br", "--", "--", "bk", "--", "--", "--", "br"]]
+    return Board(player_white=False, array=arr)

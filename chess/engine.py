@@ -20,19 +20,31 @@ class Move:
 
     def execute(self):
         self._castle()
+        self._enpassant()
         self.game[self.pos_1] = Null()
         self.game[self.pos_2] = self.from_piece
-        self._config_en_passant()
 
         self.game.moves.append(self._get_rank_file())
         self.game.white_to_move = not self.game.white_to_move
+        self._enpassant_config()
 
     def _get_rank_file(self):
         """ Convert array row/col to chess grid notation """
         return str(self.game.files[self.pos_2[1]]
                    + str(self.game.ranks[self.pos_2[0]]))  # noqa
 
-    def _config_en_passant(self):
+    def _enpassant(self):
+        """ Helper function to execute en passant capture """
+        piece_loc = (self.pos_1[0], self.pos_2[1])
+        piece = self.game[piece_loc]
+        ep_true = piece.enpassantable if isinstance(piece, Pawn) else False
+        if self.pos_1[1] == self.pos_2[1] and not ep_true:
+            return
+
+        self.game[piece_loc] = Null()
+
+    def _enpassant_config(self):
+        """ Helper function to config pawn according to en passant rules """
         if not isinstance(self.from_piece, Pawn):
             return
         if self.from_piece.first_move and abs(self.pos_1[0] - self.pos_2[0]) == 2:
