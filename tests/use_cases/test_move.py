@@ -143,24 +143,6 @@ def test_white_board_castle(white_castle, kpos, pos_2, rdest, name):
     assert rook.first_move is False
 
 
-@pytest.mark.parametrize(
-    "kpos, pos_2, rdest, name", [
-        ((0, 3), (0, 5), (0, 4), ('wk', 'wr')),  # black-white, queen side castle
-        ((0, 3), (0, 1), (0, 1), ('wk', 'wr')),  # black-white, king side caslte
-        ((7, 3), (7, 5), (7, 4), ('bk', 'br')),  # black-black, queen side castle
-        ((7, 3), (7, 1), (7, 1), ('bk', 'br'))   # black-black, king side castle
-    ]
-)
-def test_black_board_castle(black_castle, kpos, pos_2, rdest, name):
-    Move(kpos, pos_2, black_castle).execute()
-
-    king = black_castle[pos_2]
-    rook = black_castle[rdest]
-    assert king.name == name[0]
-    assert king.first_move is False
-    assert rook.name == name[1]
-    assert rook.first_move is False
-
 
 # --- FIXTURES --- # noqa
 @pytest.fixture  # noqa
@@ -220,15 +202,3 @@ def white_castle():
            ["wr", "--", "--", "--", "wk", "--", "--", "wr"]]
     return Board(array=arr)
 
-
-@pytest.fixture
-def black_castle():
-    arr = [["wr", "--", "--", "wk", "--", "--", "--", "wr"],
-           ["qp", "qp", "qp", "qp", "qp", "qp", "qp", "qp"],
-           ["--", "--", "--", "--", "--", "--", "--", "--"],
-           ["--", "--", "--", "--", "--", "--", "--", "--"],
-           ["--", "--", "--", "--", "--", "--", "--", "--"],
-           ["--", "--", "--", "--", "--", "--", "--", "--"],
-           ["wp", "wp", "wp", "wp", "wp", "wp", "wp", "wp"],
-           ["br", "--", "--", "bk", "--", "--", "--", "br"]]
-    return Board(player_white=False, array=arr)

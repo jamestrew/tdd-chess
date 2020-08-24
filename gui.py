@@ -110,7 +110,7 @@ def main():
     clock = pg.time.Clock()
     screen.fill(pg.Color(BACKGROUND))
 
-    game = Board(player_white=True)
+    game = Board(player_white=False)
     select = Select()
     load_images()
 

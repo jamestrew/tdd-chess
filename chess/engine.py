@@ -190,12 +190,8 @@ def get_castling(game, king):
 
     row = rooks[0].row
     for rook in rooks:
-        if game.player_white:
-            king_side = rook.col > king.col
-            mult = 1
-        else:
-            king_side = king.col > rook.col
-            mult = -1
+        king_side = rook.col > king.col
+        mult = 1
 
         if king_side:
             start, end = king.col + 1, rook.col

@@ -192,3 +192,6 @@ class Null:
 
     def __init__(self):
         self.name = '--'
+
+    def __repr__(self):
+        return "Null"
