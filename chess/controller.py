@@ -1,5 +1,6 @@
 """ Controller module (adapter for UIs) """
 from chess import engine
+from chess.pieces import *
 from chess.constants import *
 
 
@@ -22,7 +23,12 @@ class Select:
             return suggestions
 
         if self.pos_1 and select in self.moves:
-            engine.Move(self.pos_1, select, game).execute()
+            # breakpoint()
+            move = engine.Move(self.pos_1, select, game)
+            if isinstance(game[self.pos_1], Pawn) and select[0] in (0, 7):
+                print("promote")
+                move.promote = Queen  # temporary
+            move.execute()
             self._reset()
 
         self._reset()

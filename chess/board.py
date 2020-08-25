@@ -71,7 +71,8 @@ class Board:
                 unit = self.unit_dict[piece[-1]]
 
                 # check pawn, king, rook has moved
-                if (unit == Pawn and i not in (1, 6)) or \
+                if (piece == 'wp' and i != 6) or \
+                    (piece == 'bp' and i != 1) or \
                     (piece == 'wk' and (i, j) != (7, 4)) or \
                     (piece == 'bk' and (i, j) != (0, 4)) or \
                     (piece == 'wr' and (i, j) not in ((7, 0), (7, 7))) or \
@@ -103,10 +104,8 @@ class Board:
     def __str__(self):
         array = self.to_array()
         for i, row in enumerate(array):
-            if self.player_white:
-                row.append(DIM - i)
-            else:
-                row.append(i + 1)
+            row.append(DIM - i) if self.player_white else row.append(i + 1)
+
         if self.player_white:
             array.append(['-a', '-b', '-c', '-d', '-e', '-f', '-g', '-h'])
         else:

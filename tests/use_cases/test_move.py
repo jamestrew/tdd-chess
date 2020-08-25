@@ -1,5 +1,6 @@
 from chess.engine import Move
 from chess.board import Board
+from chess.pieces import *
 
 import pytest
 
@@ -88,7 +89,7 @@ def test_multiple_moves(start_board):
     assert start_board.moves == ['d4', 'e5', 'e5']
 
 
-# --- En Passant Config Test ---#
+# --------------------------- En Passant Config Test --------------------------- #
 @pytest.mark.parametrize(
     "pos_2, enpass", [
         ((5, 0), False),  # single step move, not en passantable
@@ -123,7 +124,7 @@ def test_enpassant_capture(game_enpassant):
     assert game_enpassant.to_array() == post_move
 
 
-# --- Castling --- # noqa
+# -------------------------------- Castling -------------------------------- # noqa
 @pytest.mark.parametrize(
     "kpos, pos_2, rdest, name", [
         ((7, 4), (7, 2), (7, 3), ('wk', 'wr')),  # white-white, queen side castle
@@ -143,8 +144,23 @@ def test_white_board_castle(white_castle, kpos, pos_2, rdest, name):
     assert rook.first_move is False
 
 
+# ------------------------------- PROMOTION ------------------------------- #
+@pytest.mark.parametrize(
+    "pos_1, pos_2, piece, name", [
+        ((1, 2), (0, 2), Queen, 'wq'),
+        ((6, 2), (7, 2), Queen, 'bq'),
+        ((6, 2), (7, 2), Rook, 'br')
+    ]
+)
+def test_pawn_promotion(promotion, pos_1, pos_2, piece, name):
+    move = Move(pos_1, pos_2, promotion)
+    move.promote = piece
+    move.execute()
 
-# --- FIXTURES --- # noqa
+    assert promotion[pos_2].name == name
+
+
+# ------------------------------- FIXTURES ------------------------------- # noqa
 @pytest.fixture  # noqa
 def game_white():
     arr = [
@@ -202,3 +218,15 @@ def white_castle():
            ["wr", "--", "--", "--", "wk", "--", "--", "wr"]]
     return Board(array=arr)
 
+
+@pytest.fixture
+def promotion():
+    arr = [["br", "--", "--", "--", "bk", "--", "--", "br"],
+           ["bp", "bp", "wp", "bp", "bp", "bp", "bp", "bp"],
+           ["--", "--", "--", "--", "--", "--", "--", "--"],
+           ["--", "--", "--", "--", "--", "--", "--", "--"],
+           ["--", "--", "--", "--", "--", "--", "--", "--"],
+           ["--", "--", "--", "--", "--", "--", "--", "--"],
+           ["wp", "wp", "bp", "wp", "wp", "wp", "wp", "wp"],
+           ["wr", "--", "--", "--", "wk", "--", "--", "wr"]]
+    return Board(array=arr)

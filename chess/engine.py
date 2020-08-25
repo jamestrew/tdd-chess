@@ -7,13 +7,13 @@ class Move:
     """
         To-do:
             - enable promotion
-            - move rook during castling
     """
 
     def __init__(self, pos_1, pos_2, game):
         self.pos_1 = pos_1
         self.pos_2 = pos_2
         self.game = game
+        self.promote = None
 
         self.from_piece = game[pos_1]
         self.dest_piece = game[pos_2]
@@ -21,6 +21,7 @@ class Move:
     def execute(self):
         self._castle()
         self._enpassant()
+        self._promotion()
         self.game[self.pos_1] = Null()
         self.game[self.pos_2] = self.from_piece
 
@@ -39,11 +40,25 @@ class Move:
             return
         piece_loc = (self.pos_1[0], self.pos_2[1])
         piece = self.game[piece_loc]
-        ep_true = piece.enpassantable if isinstance(piece, Pawn) else False
-        if self.pos_1[1] == self.pos_2[1] and not ep_true:
+
+        ep_true = False
+        if isinstance(piece, Pawn) and piece.is_white != self.from_piece.is_white:
+            ep_true = True
+        if self.pos_1[1] == self.pos_2[1] or not ep_true:
             return
 
         self.game[piece_loc] = Null()
+
+    def _promotion(self):
+        if self.promote is None:
+            return
+        print("promoting")
+        row, col = self.pos_1
+        white = self.from_piece.is_white
+        self.from_piece = self.promote(row, col, white)
+
+        if isinstance(self.from_piece, Rook):
+            self.from_piece.first_move = False
 
     def _enpassant_config(self):
         """ Helper function to config pawn according to en passant rules """
