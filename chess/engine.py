@@ -52,7 +52,6 @@ class Move:
     def _promotion(self):
         if self.promote is None:
             return
-        print("promoting")
         row, col = self.pos_1
         white = self.from_piece.is_white
         self.from_piece = self.promote(row, col, white)
@@ -75,7 +74,6 @@ class Move:
             return
 
         move = get_castling(self.game, self.from_piece)
-        # breakpoint()
         if self.pos_2 not in move.get(King):
             return
 
@@ -95,9 +93,7 @@ class Move:
 
 
 def get_all_moves(game, for_white):
-    """ Get a list of all possible moves.
-    Facilitates controller.Select
-    """
+    """ Get a list of all possible moves. """
     all_moves = []
     for row in game.board:
         for piece in row:
@@ -183,7 +179,8 @@ def get_valid_moves(game, piece):
     game[piece_loc] = piece
 
     if isinstance(piece, King) and piece.first_move:
-        valid_moves.extend(get_castling(game, piece).get(King))
+        if (castle := get_castling(game, piece).get(King)) != [(), ()]:
+            valid_moves.extend(castle)
     return valid_moves
 
 
@@ -222,3 +219,16 @@ def get_castling(game, king):
                 moves[King][1] = (row, king.col - mult * 2)
                 moves[Rook][1] = (row, rook.col + mult * 3)
     return moves
+
+
+def check_mate(game):
+    pieces = get_location(game)
+    # breakpoint()
+    if type(pieces) == tuple:
+        if get_valid_moves(game, game[pieces]):
+            return False
+    else:
+        for loc in pieces:
+            if get_valid_moves(game, game[loc]):
+                return False
+    return True

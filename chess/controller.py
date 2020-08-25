@@ -23,10 +23,8 @@ class Select:
             return suggestions
 
         if self.pos_1 and select in self.moves:
-            # breakpoint()
             move = engine.Move(self.pos_1, select, game)
             if isinstance(game[self.pos_1], Pawn) and select[0] in (0, 7):
-                print("promote")
                 move.promote = Queen  # temporary
             move.execute()
             self._reset()
