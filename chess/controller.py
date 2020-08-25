@@ -49,6 +49,18 @@ def gui_coord(player, coord):
     return False
 
 
+def check(game):
+    if engine.king_checked(game, game.white_to_move):
+        return engine.get_location(game, game.white_to_move, find_piece=King)
+    return False
+
+
+def mate(game):
+    if engine.check_mate(game):
+        return engine.get_location(game, game.white_to_move, find_piece=King)
+    return False
+
+
 def converter(coord):
     conv = {0: 7, 1: 6, 2: 5, 3: 4, 4: 3, 5: 2, 6: 1, 7: 0}
     return conv[coord[0]], conv[coord[1]]

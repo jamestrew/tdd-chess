@@ -3,7 +3,7 @@ import os
 from chess.constants import *
 
 from chess.board import Board
-from chess.controller import Select, gui_coord
+from chess.controller import Select, gui_coord, check, mate
 
 pg.init()
 pg.font.init()
@@ -27,7 +27,7 @@ def load_images():
         IMAGES['w' + piece] = pg.transform.scale(img, (SQ_SIZE, SQ_SIZE))
 
 
-def draw_board(screen):
+def draw_board(screen, white):
     """ Draw the back board grid """
 
     # Background border
@@ -36,33 +36,32 @@ def draw_board(screen):
 
     # Rank/file labels
     label_font = pg.font.SysFont('arial', 20)
-    rank_list = [8, 7, 6, 5, 4, 3, 2, 1]
-    file_list = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
+    r_list = ['8', '7', '6', '5', '4', '3', '2', '1']
+    f_list = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
+    if not white:
+        rank_list.reverse()
+        file_list.reverse()
 
     for row, x in enumerate(range(BORD, B_WIDTH, SQ_SIZE)):
 
         # file label
-        file_label = label_font.render(f"{file_list[row]}",
-                                       1, pg.Color('black'))
-        screen.blit(file_label,
-                    (x + (SQ_SIZE // 2) - (file_label.get_width() // 2), 810))
+        f_label = label_font.render(f_list[row], True, pg.Color('black'))
+        blit_dest = (x + (SQ_SIZE // 2) - (f_label.get_width() // 2), 810)
+        screen.blit(f_label, blit_dest)
 
         for col, y in enumerate(range(BORD, B_HEIGHT, SQ_SIZE)):
             # rank label
             if row == 0:  # ensures rank labels only draws onces
-                rank_label = label_font.render(f"{rank_list[col]}",
-                                               1, pg.Color('black'))
-                screen.blit(rank_label,
-                            (810, y + (SQ_SIZE // 2) - (rank_label.get_height() // 2)))
+                r_label = label_font.render(r_list[col], True, pg.Color('black'))
+                blit_dest = (810, y + (SQ_SIZE // 2) - (r_label.get_height() // 2))
+                screen.blit(r_label, blit_dest)
 
             # grid
             if x % 200 == BORD and y % 200 == BORD or \
                     x % 200 != BORD and y % 200 != BORD:
-                pg.draw.rect(screen, pg.Color(LIGHT_GRID),
-                             (x, y, SQ_SIZE, SQ_SIZE))
+                pg.draw.rect(screen, pg.Color(LIGHT_GRID), (x, y, SQ_SIZE, SQ_SIZE))
             else:
-                pg.draw.rect(screen, pg.Color(DARK_GRID),
-                             (x, y, SQ_SIZE, SQ_SIZE))
+                pg.draw.rect(screen, pg.Color(DARK_GRID), (x, y, SQ_SIZE, SQ_SIZE))
 
 
 def draw_pieces(screen, board):
@@ -77,33 +76,55 @@ def draw_pieces(screen, board):
             if piece != '--':
                 screen.blit(IMAGES[piece], pg.Rect(y, x, SQ_SIZE, SQ_SIZE))
 
-    # draw_last_move(screen, game)  # for future
 
-
-def draw_move_suggestions(screen, suggestions):
+def draw_move(screen, cells, type_=None):
     """
     Highlight move suggestions (all possible moves for selected piece)
     """
+
+    if type_ is None:
+        color = SELECT
+    elif type_ == 'check':
+        color = CHECK
+    else:
+        color = MATE
+
     for row, x in enumerate(range(BORD, B_WIDTH, SQ_SIZE)):
         for col, y in enumerate(range(BORD, B_HEIGHT, SQ_SIZE)):
-            if (col, row) in suggestions:
-                pg.draw.circle(screen, pg.Color(SUGGEST),
-                               (x + SQ_SIZE // 2, y + SQ_SIZE // 2), S_RADIUS)
+            if type(cells) == list:
+                if (col, row) in cells:
+                    pg.draw.circle(screen, pg.Color(SUGGEST),
+                                   (x + SQ_SIZE // 2, y + SQ_SIZE // 2), S_RADIUS)
+            else:
+                if (col, row) == cells:
+                    pg.draw.rect(screen, pg.Color(color), (x, y, SQ_SIZE, SQ_SIZE))
 
 
 def draw_last_move(screen, game):
     """
     Draw color indicating last played move.
     """
-    pass
+    if game.moves == []:
+        return
+
+    last_move = game.moves[-1]
+    start, end = last_move
+
+    for row, x in enumerate(range(BORD, B_WIDTH, SQ_SIZE)):
+        for col, y in enumerate(range(BORD, B_HEIGHT, SQ_SIZE)):
+            if (col, row) == start:
+                pg.draw.rect(screen, pg.Color(START), (x, y, SQ_SIZE, SQ_SIZE))
+            if (col, row) == end:
+                pg.draw.rect(screen, pg.Color(END), (x, y, SQ_SIZE, SQ_SIZE))
 
 
-def draw_game(screen, game):
-    draw_board(screen)
+def draw_bg(screen, game):
+    draw_board(screen, game.player_white)
+    draw_last_move(screen, game)
     draw_pieces(screen, game.to_array())
 
 
-def main():
+def main(player, arr, move):
     """
     Handles user inputs and graphics updates
     """
@@ -111,14 +132,13 @@ def main():
     clock = pg.time.Clock()
     screen.fill(pg.Color(BACKGROUND))
 
-    player = True
-    game = Board(player_white=player)
+    game = Board(player_white=player, array=arr, white_to_move=move)
     select = Select()
     load_images()
 
     running = True
     while running:
-        draw_game(screen, game)
+        draw_bg(screen, game)
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 running = False
@@ -129,12 +149,24 @@ def main():
 
         try:
             if suggestions:
-                draw_move_suggestions(screen, suggestions)
+                draw_move(screen, select.pos_1)
+                draw_pieces(screen, game.to_array())
+                draw_move(screen, suggestions)
         except UnboundLocalError:
             pass
+
+        if (king_loc := check(game)):
+            draw_move(screen, king_loc, type_='check')
+            draw_pieces(screen, game.to_array())
+        if (king_loc := mate(game)):
+            draw_move(screen, king_loc, type_='mate')
+            draw_pieces(screen, game.to_array())
         clock.tick(MAX_FPS)
         pg.display.flip()
 
 
 if __name__ == '__main__':
-    main()
+    player = True
+    arr = None
+    move = True
+    main(player, arr, move)

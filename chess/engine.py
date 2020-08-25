@@ -4,10 +4,7 @@ from chess.constants import *
 
 
 class Move:
-    """
-        To-do:
-            - enable promotion
-    """
+    """ Execution of various moves and conditions """
 
     def __init__(self, pos_1, pos_2, game):
         self.pos_1 = pos_1
@@ -25,12 +22,13 @@ class Move:
         self.game[self.pos_1] = Null()
         self.game[self.pos_2] = self.from_piece
 
-        self.game.moves.append(self._get_rank_file())
+        self.game.moves.append((self.pos_1, self.pos_2))
         self.game.white_to_move = not self.game.white_to_move
         self._enpassant_config()
 
     def _get_rank_file(self):
         """ Convert array row/col to chess grid notation """
+        # currently unused
         return str(self.game.files[self.pos_2[1]]
                    + str(self.game.ranks[self.pos_2[0]]))  # noqa
 
