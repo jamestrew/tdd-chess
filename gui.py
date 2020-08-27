@@ -170,4 +170,3 @@ if __name__ == '__main__':
     arr = None
     move = True
     main(player, arr, move)
-
