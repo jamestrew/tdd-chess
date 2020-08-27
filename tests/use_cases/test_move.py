@@ -31,7 +31,7 @@ def test_pawn_move_execute(game_black):
 
     assert game_black.to_array() == new_board
     assert game_black.white_to_move is True
-    assert game_black.moves == ['f5']
+    assert game_black.moves == [((1, 5), (3, 5))]
     assert move.from_piece.first_move is False
 
 
@@ -52,7 +52,7 @@ def test_rook_move_execute(game_black):
 
     assert game_black.to_array() == new_board
     assert game_black.white_to_move is True
-    assert game_black.moves == ['a6']
+    assert game_black.moves == [((0, 0), (2, 0))]
 
 
 def test_multiple_moves(start_board):
@@ -71,7 +71,7 @@ def test_multiple_moves(start_board):
 
     assert start_board.to_array() == new_board_1
     assert start_board.white_to_move is True
-    assert start_board.moves == ['d4', 'e5']
+    assert start_board.moves == [((6, 3), (4, 3)), ((1, 4), (3, 4))]
 
     Move((4, 3), (3, 4), start_board).execute()
 
@@ -86,7 +86,7 @@ def test_multiple_moves(start_board):
 
     assert start_board.to_array() == new_board_2
     assert start_board.white_to_move is False
-    assert start_board.moves == ['d4', 'e5', 'e5']
+    assert start_board.moves == [((6, 3), (4, 3)), ((1, 4), (3, 4)), ((4, 3), (3, 4))]
 
 
 # --------------------------- En Passant Config Test --------------------------- #
