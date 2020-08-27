@@ -39,8 +39,8 @@ def draw_board(screen, white):
     r_list = ['8', '7', '6', '5', '4', '3', '2', '1']
     f_list = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
     if not white:
-        rank_list.reverse()
-        file_list.reverse()
+        r_list.reverse()
+        f_list.reverse()
 
     for row, x in enumerate(range(BORD, B_WIDTH, SQ_SIZE)):
 
@@ -170,3 +170,4 @@ if __name__ == '__main__':
     arr = None
     move = True
     main(player, arr, move)
+
